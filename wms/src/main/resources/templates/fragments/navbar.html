@@ -1,26 +1,53 @@
-<th:block th:fragment="navbar-guest">
-    <nav class="navbar navbar-expand-md bg-faded navbar-wine">
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<th:block th:fragment="navbar">
+    <nav class="navbar navbar-expand-md bg-faded bg-dark">
+        <button class="navbar-toggler navbar-toggler-right custom-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand custom-nav-link-white" href="/">Warehouse Management System</a>
+        <a class="navbar-brand custom-nav-link-white" href="/">WMS</a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item disabled">
                     <a class="nav-link custom-nav-link-white" href="/">Home</a>
                 </li>
-                <li class="nav-item disabled">
+                <li sec:authorize="isAuthenticated() && hasAuthority('ADMIN')" class="nav-item disabled">
                     <div class="dropdown show">
-                        <a class="nav-link custom-nav-link-white dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" href="/">Viruses</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="/viruses/show">Show</a>
-                            <a class="dropdown-item" href="/viruses/add">Add</a>
+                        <a class="nav-link custom-nav-link-white dropdown-toggle" id="dropdownAdminMenuLink" data-toggle="dropdown" href="/">Administration</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownAdminMenuLink">
+                            <a class="dropdown-item" href="/admin/users/create">Create new User</a>
+                            <a class="dropdown-item" href="/admin/users/all">View Users</a>
                         </div>
                     </div>
                 </li>
-                <li class="nav-item disabled">
-                    <a class="nav-link custom-nav-link-white" href="/map">Map</a>
+                <li sec:authorize="isAuthenticated() && hasAnyAuthority('ADMIN', 'EMPLOYEE')" class="nav-item disabled">
+                    <div class="dropdown show">
+                        <a class="nav-link custom-nav-link-white dropdown-toggle" id="dropdownPartsMenuLink" data-toggle="dropdown" href="/">Parts</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownPartsMenuLink">
+                            <a class="dropdown-item" href="/parts/add">Add Part</a>
+                            <a class="dropdown-item" href="/parts/deliver">Deliver Parts</a>
+                            <a class="dropdown-item" href="/parts/issue">Issue Parts</a>
+                        </div>
+                    </div>
+                </li>
+                <li sec:authorize="isAuthenticated() && hasAnyAuthority('ADMIN', 'EMPLOYEE')" class="nav-item disabled">
+                    <a class="nav-link custom-nav-link-white" href="/customers">Customers</a>
+                </li>
+                <li sec:authorize="isAuthenticated() && hasAnyAuthority('ADMIN', 'EMPLOYEE')" class="nav-item disabled">
+                    <a class="nav-link custom-nav-link-white" href="/suppliers">Suppliers</a>
+                </li>
+                <li sec:authorize="isAuthenticated() && hasAnyAuthority('ADMIN', 'EMPLOYEE')" class="nav-item disabled">
+                    <a class="nav-link custom-nav-link-white" href="/documents">Documents</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item disabled">
+                    <a class="nav-link custom-nav-link-white" href="/login">Login</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item disabled">
+                    <form th:action="@{/logout}" th:method="post">
+                        <button type="submit" class="btn btn-primary">Logout</button>
+                    </form>
                 </li>
             </ul>
         </div>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<body class="bg-light">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+    <div class="container mt-4">
+        <div class="card mb-3">
+            <div class="card-header bg-dark text-white"><strong>All users</strong></div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-bordered" width="100%"
+                                       cellspacing="0"
+                                       style="width: 100%">
+                                    <thead>
+                                    <tr role="row">
+                                        <th>Username</th>
+                                        <th>Full name</th>
+                                        <th>Roles</th>
+                                        <th class="text-center" colspan="2">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="user :${allUsers}">
+                                        <td th:text="${user.getUsername()}"></td>
+                                        <td th:text="${user.getFirstName() + ' ' + user.getLastName()}"></td>
+                                        <td>
+                                            <th:block th:each="role : ${user.getAuthorities()}">
+                                                <th:block th:text="${#strings.capitalize(role.getAuthority().toLowerCase())}"></th:block>
+                                            </th:block>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/users/edit/{id}(id=${user.getId()})}">Edit</a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/users/change_password/{id}(id=${user.getId()})}">Change Password</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

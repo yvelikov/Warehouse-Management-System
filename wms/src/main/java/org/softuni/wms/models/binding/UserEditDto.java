@@ -4,7 +4,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-public class UserDto {
+public class UserEditDto {
+
+    private String id;
 
     @NotEmpty(message = "Username cannot be empty")
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 symbols long")
@@ -22,15 +24,15 @@ public class UserDto {
     @NotEmpty(message = "At least one role must be selected")
     private Set<String> authorities;
 
-    @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 4, max = 32, message = "Password must be between 4 and 32 symbols long")
-    private String password;
+    public UserEditDto() {
+    }
 
-    @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 4, max = 32, message = "Password must be between 4 and 32 symbols long")
-    private String confirmPassword;
+    public String getId() {
+        return this.id;
+    }
 
-    public UserDto() {
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -73,19 +75,4 @@ public class UserDto {
         this.authorities = authorities;
     }
 
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return this.confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
 }

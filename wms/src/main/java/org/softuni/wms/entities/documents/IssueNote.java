@@ -1,6 +1,6 @@
 package org.softuni.wms.entities.documents;
 
-import org.softuni.wms.entities.Supplier;
+import org.softuni.wms.entities.Partner;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ public class IssueNote extends Document{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private Supplier customer;
+    private Partner customer;
 
 
 }

@@ -8,9 +8,9 @@
 </div>
 <div class="container">
     <div class="card card-register mx-auto mt-5">
-        <div class="card-header bg-dark text-white"><strong>Register</strong></div>
+        <div class="card-header bg-dark text-white"><strong>Create User</strong></div>
         <div class="card-body">
-            <form th:action="@{/register}" th:method="post" th:object="${registerUserDto}">
+            <form th:action="@{/admin/users/create}" th:method="post" th:object="${userDto}">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input class="form-control" id="username" type="text" placeholder="Enter username" th:field="*{username}" th:classappend="${#fields.hasErrors('username')}?'border border-danger'"/>
@@ -48,6 +48,18 @@
                     </th:block>
                 </div>
                 <div class="form-group">
+                    <label for="authorities">User Roles</label>
+                    <select size="3" class="form-control" th:field="*{authorities}" id="authorities" multiple="multiple">
+                        <th:block th:each="role : ${roles}">
+                            <option th:value="${role.getAuthority()}" th:text="${#strings.capitalize(role.getAuthority().toLowerCase())}"></option>
+                        </th:block>
+                    </select>
+                    <th:block th:each="error : ${#fields.errors('authorities')}">
+                        <small class="text-danger" id="authoritiesHelp"  th:text="${error}"></small>
+                        <br/>
+                    </th:block>
+                </div>
+                <div class="form-group">
                     <div class="form-row">
                         <div class="col-md-6">
                             <label for="password">Password</label>
@@ -67,7 +79,8 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-block" type="submit">Register</button>
+                <button class="btn btn-primary btn-block" type="submit" th:name="action" value="create">Create</button>
+                <button class="btn btn-outline-secondary btn-block" type="submit" th:name="action" value="cancel">Cancel</button>
             </form>
         </div>
     </div>

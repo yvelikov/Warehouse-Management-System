@@ -19,7 +19,7 @@ public class Part {
     private BigDecimal listPrice;
     private Long quantity;
     private UnitOfMeasure unitOfMeasure;
-    private Supplier supplier;
+    private Partner supplier;
 
     public Part() {
     }
@@ -39,7 +39,7 @@ public class Part {
         this.id = id;
     }
 
-    @Column(name = "article_code", nullable = false)
+    @Column(name = "article_code", nullable = false, unique = true)
     public String getArticleCode() {
         return this.articleCode;
     }
@@ -97,11 +97,11 @@ public class Part {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "supplier_id",referencedColumnName = "id")
-    public Supplier getSupplier() {
+    public Partner getSupplier() {
         return this.supplier;
     }
 
-    public void setSupplier(Supplier supplier) {
+    public void setSupplier(Partner supplier) {
         this.supplier = supplier;
     }
 }

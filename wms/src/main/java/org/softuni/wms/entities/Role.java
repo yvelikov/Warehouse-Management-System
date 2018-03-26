@@ -1,17 +1,21 @@
 package org.softuni.wms.entities;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role implements GrantedAuthority {
 
     private Long id;
-    private String name;
-    private Set<User> users;
+    private String authority;
 
     public Role() {
+    }
+
+    public Role(String authority) {
+        this.authority = authority;
     }
 
     @Id
@@ -24,21 +28,13 @@ public class Role {
         this.id = id;
     }
 
-    @Column
-    public String getName() {
-        return this.name;
+    @Override
+    public String getAuthority() {
+        return this.authority;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
-    @ManyToMany(mappedBy = "roles")
-    public Set<User> getUsers() {
-        return this.users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 }

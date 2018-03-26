@@ -6,5 +6,5 @@ import javax.transaction.Transactional;
 
 @Service
 @Transactional
-public interface DocumentService {
+public interface PartnerService {
 }

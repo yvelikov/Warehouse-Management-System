@@ -2,27 +2,44 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <th:block th:insert="fragments/head"></th:block>
-<body class="bg-dark">
-<div class="container col-4">
-    <div class="card card-login mx-auto mt-5">
-        <div class="card-header">Login</div>
-        <div class="card-body">
-            <form>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input class="form-control" id="exampleInputEmail1" type="email" aria-describedby="emailHelp" placeholder="Enter email">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input class="form-control" id="exampleInputPassword1" type="password" placeholder="Password">
-                </div>
-                <a class="btn btn-primary btn-block" href="index.html">Login</a>
-            </form>
-            <div class="text-center">
-                <a class="d-block small mt-3" href="register.html">Register an Account</a>
-            </div>
+<body class="bg-light">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+    <div class="mx-auto w-50 p-3">
+        <div class="alert alert-danger alert-dismissible fade show"
+             th:if="${!#strings.isEmpty(error)}">
+            <p class="text-danger h6" th:text="${error}"></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="alert alert-success alert-dismissible fade show"
+             th:if="${!#strings.isEmpty(logout)}">
+            <p class="text-success h6" th:text="${logout}"></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
     </div>
 </div>
+    <div class="container">
+        <div class="card card-login mx-auto mt-5">
+            <div class="card-header bg-dark text-white"><strong>Login</strong></div>
+            <div class="card-body">
+                <form th:action="@{/login}" th:method="post">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input class="form-control" id="username" name="username" type="text" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input class="form-control" id="password" name="password" type="password" placeholder="Password">
+                    </div>
+                    <button class="btn btn-primary btn-block" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <th:block th:insert="fragments/footer"></th:block>
 </body>
 </html>

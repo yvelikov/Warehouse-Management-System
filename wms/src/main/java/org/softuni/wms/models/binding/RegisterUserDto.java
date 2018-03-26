@@ -2,9 +2,8 @@ package org.softuni.wms.models.binding;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.Set;
 
-public class UserDto {
+public class RegisterUserDto {
 
     @NotEmpty(message = "Username cannot be empty")
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 symbols long")
@@ -19,9 +18,6 @@ public class UserDto {
     @NotEmpty(message = "Email cannot be empty")
     private String email;
 
-    @NotEmpty(message = "At least one role must be selected")
-    private Set<String> authorities;
-
     @NotEmpty(message = "Password cannot be empty")
     @Size(min = 4, max = 32, message = "Password must be between 4 and 32 symbols long")
     private String password;
@@ -30,7 +26,7 @@ public class UserDto {
     @Size(min = 4, max = 32, message = "Password must be between 4 and 32 symbols long")
     private String confirmPassword;
 
-    public UserDto() {
+    public RegisterUserDto() {
     }
 
     public String getUsername() {
@@ -65,14 +61,6 @@ public class UserDto {
         this.email = email;
     }
 
-    public Set<String> getAuthorities() {
-        return this.authorities;
-    }
-
-    public void setAuthorities(Set<String> authorities) {
-        this.authorities = authorities;
-    }
-
     public String getPassword() {
         return this.password;
     }
@@ -88,4 +76,5 @@ public class UserDto {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
+
 }

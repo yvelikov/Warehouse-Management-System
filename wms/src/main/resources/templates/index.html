@@ -2,9 +2,21 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <th:block th:insert="fragments/head"></th:block>
-<body>
+<body class="bg-light">
 <div class="container-fluid">
     <th:block th:insert="fragments/navbar"></th:block>
+    <th:block th:insert="fragments/footer"></th:block>
+    <div class="alert alert-info alert-dismissible fade show"
+         th:if="${isFirstUser}">
+        <p class="text-info h6">We noticed that this is your first time using the application, so please <a th:href="@{/register}"><strong>Register</strong></a>!</p>
+        <!--<button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+            <!--<span aria-hidden="true">&times;</span>-->
+        <!--</button>-->
+    </div>
+    <div class="jumbotron">
+        <p>Welcome to <strong>Warehouse Management System</strong> - software for managing stock deliveries and availability.</p>
+            <p th:if="${isFirstUser}"></p>
+    </div>
 </div>
 </body>
 </html>

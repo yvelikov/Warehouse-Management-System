@@ -1,24 +1,16 @@
 package org.softuni.wms.entities;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
-
-    private String id;
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private Set<Role> roles;
-
-    public User() {
-    }
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -27,6 +19,36 @@ public class User {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     @Column(name = "id", nullable = false, updatable = false)
+    private String id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    private Boolean isAccountNonExpired;
+    private Boolean isAccountNonLocked;
+    private Boolean isCredentialsNonExpired;
+    private Boolean isEnabled;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_authorities", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> authorities;
+
+    public User() {
+    }
+
     public String getId() {
         return this.id;
     }
@@ -35,7 +57,6 @@ public class User {
         this.id = id;
     }
 
-    @Column(nullable = false, unique = true)
     public String getUsername() {
         return this.username;
     }
@@ -44,7 +65,6 @@ public class User {
         this.username = username;
     }
 
-    @Column(nullable = false)
     public String getFirstName() {
         return this.firstName;
     }
@@ -53,7 +73,7 @@ public class User {
         this.firstName = firstName;
     }
 
-    @Column(nullable = false)
+
     public String getLastName() {
         return this.lastName;
     }
@@ -62,7 +82,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    @Column(nullable = false, unique = true)
     public String getEmail() {
         return this.email;
     }
@@ -71,7 +90,6 @@ public class User {
         this.email = email;
     }
 
-    @Column(nullable = false)
     public String getPassword() {
         return this.password;
     }
@@ -80,14 +98,48 @@ public class User {
         this.password = password;
     }
 
-    @ManyToMany
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    public Set<Role> getRoles() {
-        return this.roles;
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.isAccountNonExpired;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setAccountNonExpired(Boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.isAccountNonLocked;
+    }
+
+    public void setAccountNonLocked(Boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.isCredentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isEnabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+
+    public void setAuthorities(Set<Role> authorities) {
+        this.authorities = authorities;
     }
 }
