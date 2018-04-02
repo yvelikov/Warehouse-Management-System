@@ -1,6 +1,7 @@
 package org.softuni.wms.utils;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,5 +37,9 @@ public final class DTOConvertUtil {
         }
 
         return resultSet;
+    }
+
+    public static <S, D> Page<D> convertToPage(Page<S> sourceIter, Class<D> destinationClass) {
+        return sourceIter.map(s -> DTOConvertUtil.convert(s, destinationClass));
     }
 }

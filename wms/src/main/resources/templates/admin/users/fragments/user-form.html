@@ -1,0 +1,67 @@
+<th:block th:fragment="user-form">
+    <form th:action="@{/admin/users/{formMode}/{id}(formMode=${formMode},id=${userEditDto.getId()})}" th:method="post" th:object="${userEditDto}">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input class="form-control" id="username" th:name="username" type="text" th:value="*{username}"
+                   th:classappend="${#fields.hasErrors('username')}?'border border-danger'"
+                   th:disabled="${formMode.equals('delete')}"/>
+            <th:block th:each="error : ${#fields.errors('username')}">
+                <small class="text-danger" id="usernameHelp" th:text="${error}"></small>
+                <br/>
+            </th:block>
+        </div>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <label for="firstName">First name</label>
+                    <input class="form-control" id="firstName" th:name="firstName" type="text" th:value="*{firstName}"
+                           th:classappend="${#fields.hasErrors('firstName')}?'border border-danger'"
+                           th:disabled="${formMode.equals('delete')}"/>
+                    <th:block th:each="error : ${#fields.errors('firstName')}">
+                        <small class="text-danger" id="firstNameHelp" th:text="${error}"></small>
+                        <br/>
+                    </th:block>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName">Last name</label>
+                    <input class="form-control" id="lastName" th:name="lastName" type="text" th:value="*{lastName}"
+                           th:classappend="${#fields.hasErrors('lastName')}?'border border-danger'"
+                           th:disabled="${formMode.equals('delete')}"/>
+                    <th:block th:each="error : ${#fields.errors('lastName')}">
+                        <small class="text-danger" id="lastNameHelp" th:text="${error}"></small>
+                        <br/>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input class="form-control" id="email" th:name="email" type="email" th:value="*{email}"
+                   th:classappend="${#fields.hasErrors('email')}?'border border-danger'"
+                   th:disabled="${formMode.equals('delete')}"/>
+            <th:block th:each="error : ${#fields.errors('email')}">
+                <small class="text-danger" id="emailHelp" th:text="${error}"></small>
+                <br/>
+            </th:block>
+        </div>
+        <div class="form-group" th:hidden="${formMode.equals('delete') || #authorization.getAuthentication().getName().equals(userEditDto.getUsername())}">
+            <label for="authorities">User Roles</label>
+            <select size="3" class="form-control"
+                    th:field="*{authorities}" id="authorities" multiple="multiple">
+                <th:block th:each="role : ${allRoles.getRoles()}">
+                    <option th:value="${role}" th:text="${#strings.capitalize(role.toLowerCase())}"
+                            th:hidden="${formMode.equals('edit') && role.equals('SUPER_ADMIN')}"></option>
+                </th:block>
+            </select>
+            <th:block th:each="error : ${#fields.errors('authorities')}">
+                <small class="text-danger" id="authoritiesHelp" th:text="${error}"></small>
+                <br/>
+            </th:block>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit"
+                th:classappend="${(formMode.equals('edit') ? 'btn-success' : '') + (formMode.equals('delete') ? 'btn-danger' : '')}"
+                th:name="action" th:value="${formMode}" th:text="|${#strings.capitalize(formMode)}|"></button>
+        <button class="btn btn-outline-secondary btn-block" type="submit" th:name="action" value="cancel">Cancel
+        </button>
+    </form>
+</th:block>

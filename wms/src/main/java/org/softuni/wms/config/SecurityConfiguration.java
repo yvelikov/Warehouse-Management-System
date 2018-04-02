@@ -1,6 +1,6 @@
 package org.softuni.wms.config;
 
-import org.softuni.wms.services.impl.UserServiceImpl;
+import org.softuni.wms.areas.users.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

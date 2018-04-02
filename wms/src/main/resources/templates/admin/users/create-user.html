@@ -51,7 +51,8 @@
                     <label for="authorities">User Roles</label>
                     <select size="3" class="form-control" th:field="*{authorities}" id="authorities" multiple="multiple">
                         <th:block th:each="role : ${roles}">
-                            <option th:value="${role.getAuthority()}" th:text="${#strings.capitalize(role.getAuthority().toLowerCase())}"></option>
+                            <option th:value="${role.getAuthority()}" th:text="${#strings.capitalize(role.getAuthority().toLowerCase())}"
+                                    th:hidden="${role.getAuthority().equals('SUPER_ADMIN')}"></option>
                         </th:block>
                     </select>
                     <th:block th:each="error : ${#fields.errors('authorities')}">

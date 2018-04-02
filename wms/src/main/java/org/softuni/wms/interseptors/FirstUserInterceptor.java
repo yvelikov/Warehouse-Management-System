@@ -1,8 +1,8 @@
 package org.softuni.wms.interseptors;
 
 import org.softuni.wms.annotations.FirstUserOnly;
-import org.softuni.wms.services.api.RoleService;
-import org.softuni.wms.services.api.UserService;
+import org.softuni.wms.areas.users.services.RoleService;
+import org.softuni.wms.areas.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
