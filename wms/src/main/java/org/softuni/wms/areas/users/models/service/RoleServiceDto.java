@@ -2,17 +2,17 @@ package org.softuni.wms.areas.users.models.service;
 
 public class RoleServiceDto {
 
-    private Long id;
+    private String id;
     private String authority;
 
     public RoleServiceDto() {
     }
 
-    public Long getId() {
+    public String getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

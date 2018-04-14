@@ -18,6 +18,7 @@ public class Part {
     private String name;
     private BigDecimal deliveryPrice;
     private BigDecimal listPrice;
+    private Double markUp;
     private Long quantity;
     private UnitOfMeasure unitOfMeasure;
     private Partner supplier;
@@ -49,7 +50,7 @@ public class Part {
         this.articleCode = articleCode;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String getName() {
         return this.name;
     }
@@ -72,8 +73,18 @@ public class Part {
         return this.listPrice;
     }
 
+    @Column(nullable = false)
     public void setListPrice(BigDecimal listPrice) {
         this.listPrice = listPrice;
+    }
+
+    @Column(name = "mark_up", nullable = false)
+    public Double getMarkUp() {
+        return this.markUp;
+    }
+
+    public void setMarkUp(Double markUp) {
+        this.markUp = markUp;
     }
 
     @Column(nullable = false)
@@ -86,7 +97,7 @@ public class Part {
         this.quantity = quantity;
     }
 
-    @Column(name = "unit_of_measure")
+    @Column(name = "unit_of_measure", nullable = false)
     @Enumerated(EnumType.STRING)
     public UnitOfMeasure getUnitOfMeasure() {
         return this.unitOfMeasure;

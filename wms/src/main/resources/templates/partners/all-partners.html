@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<body class="bg-light" th:with="pageIndex = ${allPartners.getPageable().getPageNumber()}">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <div class=" mx-auto mt-5 card mb-3">
+        <div class="card-header bg-dark text-white"><strong>Partners</strong></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="justify-content-end">
+                                <form class="mb-2" th:method="GET" th:action="@{/partners/search}">
+                                    <div class="row justify-content-between">
+                                        <div class="input-group col-md-8">
+                                            <input class="form-control py-2" type="search" name="value"
+                                                   placeholder="Search...">
+                                            <span class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="submit">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                            <div class="form-check form-check-inline mx-2">
+                                                <input class="form-check-input" type="radio" name="type" id="all"
+                                                       value="all" checked>
+                                                <label class="form-check-label" for="all">All</label>
+                                            </div>
+                                            <div class="form-check form-check-inline mx-1">
+                                                <input class="form-check-input" type="radio" name="type" id="customer"
+                                                       value="customer">
+                                                <label class="form-check-label" for="customer">Customer</label>
+                                            </div>
+                                            <div class="form-check form-check-inline mx-1">
+                                                <input class="form-check-input" type="radio" name="type" id="supplier"
+                                                       value="supplier">
+                                                <label class="form-check-label" for="supplier">Supplier</label>
+                                            </div>
+                                            <div><a class="btn btn-outline-primary mt-1 mb-1"
+                                                    th:href="@{/partners/add}"><i
+                                                    class="fas fa-plus">Add Partner</i></a></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <th:block th:if="${!allPartners.hasContent()}">
+                                <div class="text-info" th:text="|Your request did not yield any results|"></div>
+                            </th:block>
+                            <th:block th:if="${allPartners.hasContent()}">
+                            <table class="table table-bordered" width="100%"
+                                   cellspacing="0"
+                                   style="width: 100%">
+                                <thead>
+                                <tr role="row">
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">VAT Number</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col" class="text-center" colspan="2"
+                                        sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="partner, iter : ${allPartners}">
+                                    <th th:text="${pageIndex + 1 < 1
+                    ? 0
+                    : pageIndex * 10 + (iter.index +1)}"></th>
+                                    <td th:text="${partner.getName()}"></td>
+                                    <td th:text="${partner.getVatNumber()}"></td>
+                                    <td th:text="${partner.getAddress()}"></td>
+                                    <td th:text="${partner.getType()}"></td>
+                                    <td sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">
+                                        <div class="text-center">
+                                            <a class="btn btn-outline-info btn-sm mb-1 mt-1"
+                                               th:href="@{/partners/details/{id}(id=${partner.getId()})}">
+                                                <i class="fas fa-info-circle"></i>
+                                                <small>Details</small>
+                                            </a>
+                                            <a class="btn btn-outline-secondary btn-sm mb-1 mt-1"
+                                               th:href="@{/partners/edit/{id}(id=${partner.getId()})}">
+                                                <i class="fas fa-edit">
+                                                    <small>Edit</small>
+                                                </i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <nav
+                                 th:with="pagesToShow = ${T(Math).min(((allPartners.getPageable().getPageNumber()) / 5) * 5 + 5, allPartners.getTotalPages())}">
+                                <ul class="pagination pagination-sm justify-content-center">
+                                    <!--Previous Button-->
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           th:if="${allPartners.hasPrevious()}"
+                                           th:href="@{/partners(page=${pageIndex})}">Previous</a>
+                                    </li>
+                                    <!--Dot Button-->
+                                    <li class="page-item"><a class="page-link" th:if="${pageIndex + 1> 5}"
+                                                             th:disabled="true">...</a></li>
+                                    <!--Pagination Navigation-->
+                                    <th:block th:each="number : ${#numbers.sequence(
+            ((allPartners.getPageable().getPageNumber()) / 5) * 5 + 1,
+            pagesToShow)}">
+                                        <li class="page-item"
+                                            th:classappend="${number == pageIndex + 1?'active':''}"><a
+                                                class="page-link" th:href="@{/partners(page=${number})}"
+                                                th:text="${number}"></a></li>
+                                    </th:block>
+                                    <!--Dot Button-->
+                                    <li class="page-item"><a class="page-link"
+                                                             th:if="${pageIndex + 1 < allPartners.getTotalPages() - 4 }"
+                                                             th:disabled="true">...</a></li>
+                                    <!--Next Button-->
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           th:if="${allPartners.hasNext()}"
+                                           th:href="@{/partners(page=${pageIndex + 2})}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

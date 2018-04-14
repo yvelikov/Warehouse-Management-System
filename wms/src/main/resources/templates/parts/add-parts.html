@@ -2,11 +2,17 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <th:block th:insert="fragments/head"></th:block>
+<script th:src="@{/js/buildyourform.js}"></script>
 <body class="bg-light">
 <div class="container-fluid">
     <th:block th:insert="fragments/navbar"></th:block>
     <div class="container mt-4">
         <h2>Parts Delivery</h2>
+        <fieldset id="buildyourform">
+            <legend>Build your own form!</legend>
+        </fieldset>
+        <input type="button" value="Preview form" class="add" id="preview" />
+        <input type="button" value="Add a field" class="add" id="add" />
         <form th:method="post">
             <th:block th:each="num : ${#numbers.sequence(0,10)}">
                 <div class="form-group">

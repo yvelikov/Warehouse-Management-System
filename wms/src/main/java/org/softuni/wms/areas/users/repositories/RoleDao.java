@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RoleDao extends JpaRepository<Role, Long>{
+public interface RoleDao extends JpaRepository<Role, String>{
     Role findFirstByAuthority(String authority);
 
     @Query(value = "SELECT * FROM roles as r\n" +

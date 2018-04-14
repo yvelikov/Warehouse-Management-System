@@ -1,9 +1,11 @@
 package org.softuni.wms.interseptors;
 
 import org.softuni.wms.annotations.PreAuthenticateAction;
+import org.softuni.wms.areas.users.entities.enums.UserRole;
 import org.softuni.wms.areas.users.models.binding.UserEditDto;
-import org.softuni.wms.areas.users.services.UserService;
+import org.softuni.wms.areas.users.services.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,7 +37,7 @@ public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
                 return super.preHandle(request, response, handler);
             }
 
-            if (handlerMethod.getMethodAnnotation(PreAuthenticateAction.class).inRole().equals("ADMIN")) {
+            if (handlerMethod.getMethodAnnotation(PreAuthenticateAction.class).inRole().equals(UserRole.ADMIN.name())) {
 
                 Principal principal = request.getUserPrincipal();
                 UserDetails userDetails = this.userService.loadUserByUsername(principal.getName());
@@ -43,17 +45,10 @@ public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
                 String userId = requestURL.substring(requestURL.lastIndexOf("/") + 1);
                 UserEditDto userEditDto = this.userService.findById(userId);
 
-                if (userEditDto.getAuthorities().contains("SUPER_ADMIN") && this.isAdmin(userDetails)) {
-                    throw new AccessDeniedException("Access denied");
+                if (userEditDto.getAuthorities().contains(UserRole.SUPER_ADMIN.name()) && this.isAdmin(userDetails)) {
+                    throw new AccessDeniedException(HttpStatus.FORBIDDEN.getReasonPhrase());
                 }
-//                LoggedInUser currentUser = (LoggedInUser) request.getSession().getAttribute(Constants.LOGGED_IN_USER);
-//                if (currentUser.hasRole("ADMIN")) {
-//                    return true;
-//                }
-//                response.sendError(401, UNAUTHORIZED_MESSAGE);
-//                return false;
             } else return true;
-
         }
         return true;
     }
@@ -61,7 +56,7 @@ public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
     private boolean isAdmin(UserDetails userDetails) {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         for (GrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals("ADMIN")) {
+            if (authority.getAuthority().equals(UserRole.ADMIN.name())) {
                 return true;
             }
         }

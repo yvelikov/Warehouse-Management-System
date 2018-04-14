@@ -1,5 +1,6 @@
 package org.softuni.wms.areas.users.entities;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
-    private Long id;
+    private String id;
     private String authority;
 
     public Role() {
@@ -19,12 +20,17 @@ public class Role implements GrantedAuthority {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "id", nullable = false, updatable = false)
+    public String getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

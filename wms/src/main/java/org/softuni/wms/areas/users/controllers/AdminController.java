@@ -7,8 +7,8 @@ import org.softuni.wms.areas.users.models.binding.UserEditDto;
 import org.softuni.wms.areas.users.models.service.RoleServiceDto;
 import org.softuni.wms.areas.users.models.view.AllRolesViewDto;
 import org.softuni.wms.areas.users.models.view.UserViewDto;
-import org.softuni.wms.areas.users.services.RoleService;
-import org.softuni.wms.areas.users.services.UserService;
+import org.softuni.wms.areas.users.services.api.RoleService;
+import org.softuni.wms.areas.users.services.api.UserService;
 import org.softuni.wms.controllers.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,6 +27,8 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController extends BaseController {
 
+    private static final String ACTION_RESULT_MESSAGE = "User \'%s\' successfully %s";
+
     private final UserService userService;
     private final RoleService roleService;
 
@@ -33,6 +36,16 @@ public class AdminController extends BaseController {
     public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
+    }
+
+    private ModelAndView getUserView(UserEditDto userEditDto, ModelAndView modelAndView) {
+        String debug = "";
+        modelAndView.setViewName("admin/users/edit-user");
+        AllRolesViewDto allRoles = this.roleService.getAllRolesView();
+        modelAndView.addObject("allRoles", allRoles);
+        modelAndView.addObject("userEditDto", userEditDto);
+
+        return modelAndView;
     }
 
     @GetMapping("/users/create")
@@ -95,20 +108,9 @@ public class AdminController extends BaseController {
     @PreAuthenticateAction(inRole = "ADMIN")
     @GetMapping("/users/edit/{id}")
     public ModelAndView editUser(@PathVariable String id, ModelAndView modelAndView) {
-
-        modelAndView.setViewName("admin/users/edit-user");
-        List<RoleServiceDto> roles = this.roleService.findAll();
-        AllRolesViewDto allRoles = new AllRolesViewDto();
-
-        for (RoleServiceDto role : roles) {
-            allRoles.add(role.getAuthority());
-        }
-        UserEditDto userEditDto = this.userService.findById(id);
-        modelAndView.addObject("allRoles", allRoles);
-        modelAndView.addObject("userEditDto", userEditDto);
-
-        return modelAndView;
+        return getUserView(this.userService.findById(id), modelAndView);
     }
+
 
     @PreAuthenticateAction(inRole = "ADMIN")
     @PostMapping("/users/edit/{id}")
@@ -117,22 +119,14 @@ public class AdminController extends BaseController {
                                         @Valid @ModelAttribute UserEditDto userEditDto,
                                         BindingResult bindingResult,
                                         ModelAndView modelAndView,
-                                        HttpServletRequest request) {
+                                        HttpServletRequest request,
+                                        RedirectAttributes redirectAttributes) {
         if ("edit".equals(action)) {
             if (bindingResult.hasErrors()) {
-                modelAndView.setViewName("admin/users/edit-user");
-                List<RoleServiceDto> roles = this.roleService.findAll();
-                AllRolesViewDto allRoles = new AllRolesViewDto();
-
-                for (RoleServiceDto role : roles) {
-                    allRoles.add(role.getAuthority());
-                }
-
-                modelAndView.addObject("allRoles", allRoles);
-                modelAndView.addObject("userEditDto", userEditDto);
-                return modelAndView;
+                return this.getUserView(userEditDto, modelAndView);
             }
-
+            String actionResult = String.format(ACTION_RESULT_MESSAGE, userEditDto.getUsername(), action + "ed");
+            redirectAttributes.addFlashAttribute("actionResult", actionResult);
             this.userService.edit(userEditDto);
         }
 
@@ -144,4 +138,65 @@ public class AdminController extends BaseController {
 
         return modelAndView;
     }
+
+    @PreAuthenticateAction(inRole = "ADMIN")
+    @GetMapping("/users/disable/{id}")
+    public ModelAndView disableUser(@PathVariable String id, ModelAndView modelAndView) {
+        return getUserView(this.userService.findById(id), modelAndView);
+    }
+
+    @PreAuthenticateAction(inRole = "ADMIN")
+    @PostMapping("/users/disable/{id}")
+    public ModelAndView disableUserConfirm(@RequestParam String action,
+                                          @PathVariable String id,
+                                          @Valid @ModelAttribute UserEditDto userEditDto,
+                                          BindingResult bindingResult,
+                                          ModelAndView modelAndView,
+                                          HttpServletRequest request,
+                                          RedirectAttributes redirectAttributes) {
+        if ("disable".equals(action)) {
+            String actionResult = String.format(ACTION_RESULT_MESSAGE, userEditDto.getUsername(), "disabled");
+            redirectAttributes.addFlashAttribute("actionResult", actionResult);
+            this.userService.disable(userEditDto.getId());
+        }
+
+        if ("cancel".equals(action)) {
+            return this.redirectToLast(request);
+        }
+
+        modelAndView.setViewName("redirect:/admin/users/all");
+
+        return modelAndView;
+    }
+
+    @PreAuthenticateAction(inRole = "ADMIN")
+    @GetMapping("/users/enable/{id}")
+    public ModelAndView enableUser(@PathVariable String id, ModelAndView modelAndView) {
+        return getUserView(this.userService.findById(id), modelAndView);
+    }
+
+    @PreAuthenticateAction(inRole = "ADMIN")
+    @PostMapping("/users/enable/{id}")
+    public ModelAndView enableUserConfirm(@RequestParam String action,
+                                           @PathVariable String id,
+                                           @Valid @ModelAttribute UserEditDto userEditDto,
+                                           BindingResult bindingResult,
+                                           ModelAndView modelAndView,
+                                           HttpServletRequest request,
+                                           RedirectAttributes redirectAttributes) {
+        if ("enable".equals(action)) {
+            String actionResult = String.format(ACTION_RESULT_MESSAGE, userEditDto.getUsername(), "enabled");
+            redirectAttributes.addFlashAttribute("actionResult", actionResult);
+            this.userService.enable(userEditDto.getId());
+        }
+
+        if ("cancel".equals(action)) {
+            return this.redirectToLast(request);
+        }
+
+        modelAndView.setViewName("redirect:/admin/users/all");
+
+        return modelAndView;
+    }
+
 }

@@ -2,7 +2,7 @@ package org.softuni.wms.areas.history.entities;
 
 
 import org.hibernate.annotations.GenericGenerator;
-import org.softuni.wms.areas.documents.entities.Document;
+import org.softuni.wms.areas.documents.entities.docs.Document;
 import org.softuni.wms.areas.parts.entities.Part;
 import org.softuni.wms.areas.users.entities.User;
 import org.softuni.wms.areas.documents.entities.enums.Operation;

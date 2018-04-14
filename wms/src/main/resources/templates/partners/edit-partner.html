@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<body class="bg-light">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <div class="card card-register mx-auto mt-5">
+        <div class="card-header bg-dark text-white"><strong>Edit Partner</strong></div>
+        <div class="card-body">
+            <form th:action="@{/partners/edit/{id}(id=${editPartnerDto.getId()})}" th:method="post" th:object="${editPartnerDto}">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" id="name" type="text" th:name="name" th:value="*{name}"
+                           th:classappend="${#fields.hasErrors('name')}?'border border-danger'"/>
+                    <th:block th:each="error : ${#fields.errors('name')}">
+                        <small class="text-danger" id="nameHelp" th:text="${error}"></small>
+                        <br/>
+                    </th:block>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input class="form-control" id="address" type="text" th:name="address" th:value="*{address}"
+                           th:classappend="${#fields.hasErrors('address')}?'border border-danger'"/>
+                    <th:block th:each="error : ${#fields.errors('address')}">
+                        <small class="text-danger" id="addressHelp" th:text="${error}"></small>
+                        <br/>
+                    </th:block>
+                </div>
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input class="form-control" id="phoneNumber" type="text" th:name="phoneNumber" th:value="*{phoneNumber}"
+                                   th:classappend="${#fields.hasErrors('phoneNumber')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('phoneNumber')}">
+                                <small class="text-danger" id="phoneNumberHelp" th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="vatNumber">VAT Number</label>
+                            <input class="form-control" id="vatNumber" type="text" th:name="vatNumber" th:value="*{vatNumber}"
+                                   th:classappend="${#fields.hasErrors('vatNumber')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('vatNumber')}">
+                                <small class="text-danger" id="vatNumberHelp" th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" th:field="*{customer}" th:value="${true}"
+                               name="isCustomer" checked/> Customer
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" th:field="*{supplier}" th:value="${true}"
+                               name="isSupplier"/> Supplier
+                    </label>
+                </div>
+                <button class="btn btn-primary btn-block mt-2" type="submit" th:name="action" value="edit">Edit</button>
+                <button class="btn btn-outline-secondary btn-block" type="submit" th:name="action" value="cancel">
+                    Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

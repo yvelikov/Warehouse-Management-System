@@ -8,6 +8,7 @@ public class UserViewDto {
     private String username;
     private String firstName;
     private String lastName;
+    private Boolean isEnabled;
     private Set<String> authorities;
 
     public UserViewDto() {
@@ -43,6 +44,14 @@ public class UserViewDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Boolean getEnabled() {
+        return this.isEnabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
     }
 
     public Set<String> getAuthorities() {

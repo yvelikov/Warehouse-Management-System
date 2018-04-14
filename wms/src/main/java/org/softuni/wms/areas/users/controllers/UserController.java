@@ -2,7 +2,7 @@ package org.softuni.wms.areas.users.controllers;
 
 import org.softuni.wms.annotations.FirstUserOnly;
 import org.softuni.wms.areas.users.models.binding.RegisterUserDto;
-import org.softuni.wms.areas.users.services.UserService;
+import org.softuni.wms.areas.users.services.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,6 +19,8 @@ import javax.validation.Valid;
 @Controller
 public class UserController {
 
+    private static final String INVALID_CREDENTIALS = "Invalid username or password";
+    private static final String LOGOUT_SUCCESSFUL = "Logged out successfully!";
     private final UserService userService;
 
     @Autowired
@@ -34,12 +36,12 @@ public class UserController {
         modelAndView.setViewName("login");
 
         if (error != null) {
-            error = "Invalid username or password";
+            error = INVALID_CREDENTIALS;
             modelAndView.addObject("error", error);
         }
 
         if (logout != null) {
-            logout = "Logged out successfully!";
+            logout = LOGOUT_SUCCESSFUL;
             modelAndView.addObject("logout", logout);
         }
 
@@ -71,53 +73,4 @@ public class UserController {
 
         return "redirect:/login";
     }
-
-//    @GetMapping("/login")
-//    public ModelAndView login(ModelAndView modelAndView) {
-//
-//        modelAndView.setViewName("login");
-//        modelAndView.addObject("userLoginDto", new UserLoginDto());
-//        return modelAndView;
-//    }
-//
-//    @PostMapping("/login")
-//    public String loginConfirm(@ModelAttribute UserLoginDto userLoginDto, Model model, HttpSession httpSession) {
-//        return "redirect:/";
-//    }
-
-
-//    @GetMapping("/users/create")
-//    public ModelAndView register(ModelAndView modelAndView) {
-//        modelAndView.setViewName("users/create-user");
-//
-//        List<RoleDto> roles = this.roleService.findAll();
-//
-//        modelAndView.addObject("roles", roles);
-//        modelAndView.addObject("userDto", new UserDto());
-//        return modelAndView;
-//    }
-
-//    @PostMapping("/users/create")
-//    public String registerConfirm(@Valid @ModelAttribute UserDto userDto, BindingResult bindingResult, Model model) {
-//
-//        List<RoleDto> roles = null;
-//
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("userDto", userDto);
-//            roles = this.roleService.findAll();
-//            model.addAttribute("roles", roles);
-//            return "users/create-user";
-//        }
-//
-//        if(!userDto.getPassword().equals(userDto.getConfirmPassword())){
-//            bindingResult.rejectValue("confirmPassword","error.confirmPassword", "Passwords must match");
-//            roles = this.roleService.findAll();
-//            model.addAttribute("roles", roles);
-//            return "users/create-user";
-//        }
-//        this.userService.register(userDto);
-//
-//        return "redirect:/users/all";
-//    }
-
 }

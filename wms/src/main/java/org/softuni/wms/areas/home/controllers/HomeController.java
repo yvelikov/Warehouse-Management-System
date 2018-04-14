@@ -1,7 +1,7 @@
 package org.softuni.wms.areas.home.controllers;
 
-import org.softuni.wms.areas.users.services.RoleService;
-import org.softuni.wms.areas.users.services.UserService;
+import org.softuni.wms.areas.users.services.api.RoleService;
+import org.softuni.wms.areas.users.services.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +24,9 @@ public class HomeController {
         modelAndView.setViewName("index");
         if (this.userService.getUsersCount() == 0) {
             modelAndView.addObject("isFirstUser", true);
-            this.roleService.seedRoles();
+            if(this.roleService.getRolesCount() == 0){
+                this.roleService.seedRoles();
+            }
         }
         return modelAndView;
     }

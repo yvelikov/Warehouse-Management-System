@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<script th:src="@{/js/listPriceCalculator.js}"></script>
+<body class="bg-light">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <div class="card card-register mx-auto mt-5">
+        <div class="card-header bg-dark text-white"><strong>Edit Part</strong></div>
+        <div class="card-body">
+            <form th:action="@{/parts/edit/{id}(id=${editPartDto.getId()})}" th:method="post" th:object="${editPartDto}">
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-4">
+                            <label for="articleCode">SKU Code</label>
+                            <input class="form-control" id="articleCode" type="text" placeholder="Enter article code"
+                                   th:value="*{articleCode}" th:field="*{articleCode}"
+                                   th:classappend="${#fields.hasErrors('articleCode')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('articleCode')}">
+                                <small class="text-danger" id="articleCodeHelp" th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="name">Part name</label>
+                            <input class="form-control" id="name" type="text" placeholder="Enter part name"
+                                   th:value="*{name}" th:field="*{name}"
+                                   th:classappend="${#fields.hasErrors('name')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('name')}">
+                                <small class="text-danger" id="nameHelp" th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                        <div class="col-md-2">
+                            <!--<div class="form-group">-->
+                                <label for="unitOfMeasure">UoM</label>
+                                <select class="form-control" th:field="*{unitOfMeasure}" th:value="*{unitOfMeasure}" id="unitOfMeasure" name="unitOfMeasure">
+                                    <option th:value="PIECE" th:field="*{unitOfMeasure}">Piece</option>
+                                    <option th:value="KG" th:field="*{unitOfMeasure}">Kg</option>
+                                    <option th:value="METER" th:field="*{unitOfMeasure}">Meter</option>
+                                </select>
+                            <!--</div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="mt-3" for="supplier">Supplier</label>
+                    <select class="form-control" th:field="*{supplier}" th:value="*{supplier}" id="supplier">
+                        <th:block th:each="supp: ${suppliers}">
+                            <option th:value="${supp}" th:text="${supp}"></option>
+                        </th:block>
+                    </select>
+                    <th:block th:each="error : ${#fields.errors('supplier')}">
+                        <small class="text-danger" id="supplierHelp"  th:text="${error}"></small>
+                        <br/>
+                    </th:block>
+                </div>
+                <div class="form-group price-input">
+                    <div class="form-row">
+                        <div class="col-md-5">
+                            <label for="deliveryPrice">Delivery Price [EUR]</label>
+                            <input type="number" class="form-control" id="deliveryPrice" name="deliveryPrice" min="0" step="0.01"
+                                   th:field="*{deliveryPrice}" th:classappend="${#fields.hasErrors('deliveryPrice')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('deliveryPrice')}">
+                                <small class="text-danger" id="deliveryPriceHelp"  th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="markUp">Mark Up %</label>
+                            <input type="number" class="form-control" id="markUp" name="markUp" min="0" max="300" step="0.01"
+                                   th:field="*{markUp}" th:classappend="${#fields.hasErrors('markUp')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('markUp')}">
+                                <small class="text-danger" id="markUpHelp"  th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="listPrice">List Price [EUR]</label>
+                            <input type="number" class="form-control" id="listPrice" name="listPrice" min="0" step="0.01"
+                                   th:field="*{listPrice}" th:classappend="${#fields.hasErrors('listPrice')}?'border border-danger'"/>
+                            <th:block th:each="error : ${#fields.errors('listPrice')}">
+                                <small class="text-danger" id="listPriceHelp"  th:text="${error}"></small>
+                                <br/>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block mt-2" type="submit" th:name="action" value="edit">Edit</button>
+                <button class="btn btn-outline-secondary btn-block" type="submit" th:name="action" value="cancel">
+                    Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

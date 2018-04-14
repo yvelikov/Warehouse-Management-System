@@ -22,24 +22,51 @@
         </div>
     </div>
 </div>
-    <div class="container">
-        <div class="card card-login mx-auto mt-5">
-            <div class="card-header bg-dark text-white"><strong>Login</strong></div>
-            <div class="card-body">
-                <form th:action="@{/login}" th:method="post">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input class="form-control" id="username" name="username" type="text" placeholder="Enter username">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input class="form-control" id="password" name="password" type="password" placeholder="Password">
-                    </div>
-                    <button class="btn btn-primary btn-block" type="submit">Login</button>
-                </form>
-            </div>
+<div class="container">
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header bg-dark text-white"><strong>Login</strong></div>
+        <div class="card-body">
+            <form th:action="@{/login}" th:method="post">
+            <form>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input class="form-control" id="username" name="username" type="text" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input class="form-control" id="password" name="password" type="password" placeholder="Password">
+                </div>
+                <button class="btn btn-primary btn-block" id="login-button" type="submit">Login</button>
+            </form>
         </div>
     </div>
-    <th:block th:insert="fragments/footer"></th:block>
+</div>
+<!--<script>-->
+
+    <!--let auth = null;-->
+
+    <!--$('#login-button').click(function (ev)-->
+    <!--{-->
+        <!--ev.preventDefault();-->
+        <!--let username = $('#username').val();-->
+        <!--let password = $('#password').val();-->
+
+        <!--$.ajax({-->
+            <!--type: 'POST',-->
+            <!--url: 'http://localhost:8000/login',-->
+            <!--headers: {-->
+                <!--"Content-Type": "application/json"-->
+            <!--},-->
+            <!--data: JSON.stringify({-->
+                <!--"username":username,-->
+                <!--"password":password-->
+            <!--})-->
+        <!--}).done(function (body) {-->
+            <!--auth = body['Authorization'];-->
+            <!--console.log(auth);-->
+        <!--});-->
+    <!--})-->
+<!--</script>-->
+<th:block th:insert="fragments/footer"></th:block>
 </body>
 </html>

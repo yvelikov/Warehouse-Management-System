@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<body class="bg-light" th:with="pageIndex = ${filteredParts.getPageable().getPageNumber()}">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <div class=" mx-auto mt-5 card mb-3">
+        <div class="card-header bg-dark text-white"><strong>Parts</strong></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="justify-content-end">
+                                <form class="mb-2" th:method="GET" th:action="@{/parts/search}">
+                                    <div class="row justify-content-between">
+                                        <div class="input-group col-md-8">
+                                            <input class="form-control py-2" type="search" name="value"
+                                                   placeholder="Search...">
+                                            <span class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="submit">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                            <div class="form-check form-check-inline mx-2">
+                                                <input class="form-check-input" type="radio" name="type" id="all"
+                                                       value="all" th:field="${filter.type}">
+                                                <label class="form-check-label" for="all">All</label>
+                                            </div>
+                                            <div class="form-check form-check-inline mx-1">
+                                                <input class="form-check-input" type="radio" name="type" id="onStock"
+                                                       value="onStock" th:field="${filter.type}">
+                                                <label class="form-check-label" for="onStock">On stock</label>
+                                            </div>
+                                            <div class="form-check form-check-inline mx-1">
+                                                <input class="form-check-input" type="radio" name="type" id="outOfStock"
+                                                       value="outOfStock" th:field="${filter.type}">
+                                                <label class="form-check-label" for="outOfStock">Out of Stock</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <th:block th:if="${!filteredParts.hasContent()}">
+                                <div class="text-info" th:text="|Your request did not yield any results|"></div>
+                            </th:block>
+                            <th:block th:if="${filteredParts.hasContent()}">
+                            <table class="table table-bordered" width="100%"
+                                   cellspacing="0"
+                                   style="width: 100%">
+                                <thead>
+                                <tr role="row">
+                                    <th scope="col">#</th>
+                                    <th scope="col">SKU Code</th>
+                                    <th scope="col">Part name</th>
+                                    <th scope="col">UoM</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Unit price</th>
+                                    <th scope="col" class="text-center" colspan="2"
+                                        sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="part, iter : ${filteredParts}">
+                                    <th th:text="${pageIndex + 1 < 1
+                    ? 0
+                    : pageIndex * 10 + (iter.index +1)}"></th>
+                                    <td th:text="${part.getArticleCode()}"></td>
+                                    <td th:text="${part.getName()}"></td>
+                                    <td th:text="${part.getUnitOfMeasure()}"></td>
+                                    <td th:text="${part.getQuantity()}"></td>
+                                    <td th:text="${part.getListPrice()}"></td>
+                                    <td sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">
+                                        <div class="text-center">
+                                            <a class="btn btn-outline-info btn-sm mb-1 mt-1"
+                                               th:href="@{/parts/details/{id}(id=${part.getId()})}">
+                                                <i class="fas fa-info-circle"></i>
+                                                <small>Details</small>
+                                            </a>
+                                            <a class="btn btn-outline-secondary btn-sm mb-1 mt-1"
+                                               th:href="@{/parts/edit/{id}(id=${part.getId()})}">
+                                                <i class="fas fa-edit">
+                                                    <small>Edit</small>
+                                                </i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <th:block th:if="${filteredParts.hasContent()}">
+                            <nav
+                                 th:with="pagesToShow = ${T(Math).min(((filteredParts.getPageable().getPageNumber()) / 5) * 5 + 5, filteredParts.getTotalPages())}">
+                                <ul class="pagination pagination-sm justify-content-center">
+                                    <!--Previous Button-->
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           th:if="${filteredParts.hasPrevious()}"
+                                           th:href="@{/parts/search(value=${filter.getValue()},type=${filter.getType()},page=${pageIndex})}">Previous</a>
+                                    </li>
+                                    <!--Dot Button-->
+                                    <li class="page-item"><a class="page-link" th:if="${pageIndex + 1> 5}"
+                                                             th:disabled="true">...</a></li>
+                                    <!--Pagination Navigation-->
+                                    <th:block th:each="number : ${#numbers.sequence(
+            ((filteredParts.getPageable().getPageNumber()) / 5) * 5 + 1,
+            pagesToShow)}">
+                                        <li class="page-item"
+                                            th:classappend="${number == pageIndex + 1?'active':''}"><a
+                                                class="page-link" th:href="@{/parts/search/(value=${filter.getValue()},type=${filter.getType()},page=${number})}"
+                                                th:text="${number}"></a></li>
+                                    </th:block>
+                                    <!--Dot Button-->
+                                    <li class="page-item"><a class="page-link"
+                                                             th:if="${pageIndex + 1 < filteredParts.getTotalPages() - 4 }"
+                                                             th:disabled="true">...</a></li>
+                                    <!--Next Button-->
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           th:if="${filteredParts.hasNext()}"
+                                           th:href="@{/parts/search(value=${filter.getValue()},type=${filter.getType()},page=${pageIndex + 2})}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

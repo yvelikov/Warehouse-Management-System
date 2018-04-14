@@ -6,7 +6,14 @@
 <div class="container-fluid">
     <th:block th:insert="fragments/navbar"></th:block>
     <div class="container mt-4">
-        <div class="card mb-3">
+        <div class="alert alert-info alert-dismissible fade show"
+             th:if="${!#strings.isEmpty(actionResult)}">
+            <p class="text-info h6" th:text="${actionResult}"></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="card mx-auto mt-5 mb-3">
             <div class="card-header bg-dark text-white"><strong>All users</strong></div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -38,36 +45,49 @@
                                             <div>
                                                 <th:block
                                                         th:if="${(!user.getAuthorities().contains('SUPER_ADMIN'))}">
-                                                    <a class="btn btn-sm btn-outline-secondary"
+                                                    <a class="btn btn-sm btn-outline-secondary mb-1"
                                                        th:href="@{/admin/users/edit/{id}(id=${user.getId()})}">
-                                                        <small>Edit</small>
+                                                        <i class="fas fa-edit"><small>Edit</small></i>
                                                     </a>
                                                 </th:block>
-                                                <th:block sec:authorize="hasAuthority('SUPER_ADMIN')" th:if="${user.getAuthorities().contains('SUPER_ADMIN')}">
-                                                    <a class="btn btn-sm btn-outline-secondary"
+                                                <th:block sec:authorize="hasAuthority('SUPER_ADMIN')"
+                                                          th:if="${user.getAuthorities().contains('SUPER_ADMIN')}">
+                                                    <a class="btn btn-sm btn-outline-secondary mb-1"
                                                        th:href="@{/admin/users/edit/{id}(id=${user.getId()})}">
-                                                        <small>Edit</small>
+                                                        <i class="fas fa-edit"><small>Edit</small></i>
                                                     </a>
                                                 </th:block>
                                                 <th:block
                                                         th:if="${!user.getAuthorities().contains('SUPER_ADMIN')}">
-                                                    <a class="btn btn-sm btn-outline-secondary"
+                                                    <a class="btn btn-sm btn-outline-secondary mb-1"
                                                        th:href="@{/admin/users/change_password/{id}(id=${user.getId()})}">
                                                         <small>Change Password</small>
                                                     </a>
                                                 </th:block>
-                                                <th:block sec:authorize="hasAuthority('SUPER_ADMIN')" th:if="${user.getAuthorities().contains('SUPER_ADMIN')}">
-                                                    <a class="btn btn-sm btn-outline-secondary"
+                                                <th:block sec:authorize="hasAuthority('SUPER_ADMIN')"
+                                                          th:if="${user.getAuthorities().contains('SUPER_ADMIN')}">
+                                                    <a class="btn btn-sm btn-outline-secondary mb-1"
                                                        th:href="@{/admin/users/change_password/{id}(id=${user.getId()})}">
                                                         <small>Change Password</small>
                                                     </a>
                                                 </th:block>
                                                 <th:block sec:authorize="hasAuthority('SUPER_ADMIN')">
-                                                    <a onclick="confirm('Are you certain want to delete this virus?')" class="btn btn-sm btn-danger"
+                                                    <th:block th:if="${user.getEnabled()}">
+                                                    <a class="btn btn-danger btn-sm mb-1" data-toggle="tooltip" title="Disable account"
                                                        th:classappend="${#authorization.getAuthentication().getName().equals(user.getUsername())}?'btn disabled'"
-                                                       th:href="@{/admin/users/delete/{id}(id=${user.getId()})}">
-                                                        <small>Delete</small>
+                                                       th:href="@{/admin/users/disable/{id}(id=${user.getId()})}">
+                                                        <i class="fas fa-lock"></i>
                                                     </a>
+                                                    </th:block>
+                                                </th:block>
+                                                <th:block sec:authorize="hasAuthority('SUPER_ADMIN')">
+                                                    <th:block th:if="${!user.getEnabled()}">
+                                                    <a class="btn btn-success btn-sm mb-1" data-toggle="tooltip" title="Enable account"
+                                                       th:classappend="${#authorization.getAuthentication().getName().equals(user.getUsername())}?'btn disabled'"
+                                                       th:href="@{/admin/users/enable/{id}(id=${user.getId()})}">
+                                                        <i class="fas fa-lock-open"></i>
+                                                    </a>
+                                                    </th:block>
                                                 </th:block>
                                             </div>
                                         </td>
@@ -82,5 +102,12 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $( function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        } );
+    });
+</script>
 </body>
 </html>

@@ -13,8 +13,8 @@ public class Partner {
     private String vatNumber;
     private String address;
     private String phoneNumber;
-    private Boolean isCustomer;
-    private Boolean isSupplier;
+    private boolean isCustomer;
+    private boolean isSupplier;
 
     public Partner() {
     }
@@ -34,7 +34,7 @@ public class Partner {
         this.id = id;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String getName() {
         return this.name;
     }
@@ -43,7 +43,7 @@ public class Partner {
         this.name = name;
     }
 
-    @Column(nullable = false)
+    @Column
     public String getVatNumber() {
         return this.vatNumber;
     }
@@ -70,21 +70,21 @@ public class Partner {
         this.phoneNumber = phoneNumber;
     }
 
-    @Column
-    public Boolean getIsCustomer() {
+    @Column(name = "is_customer", nullable = false)
+    public boolean getCustomer() {
         return this.isCustomer;
     }
 
-    public void setIsCustomer(Boolean customer) {
+    public void setCustomer(boolean customer) {
         this.isCustomer = customer;
     }
 
-    @Column
-    public Boolean getIsSupplier() {
+    @Column(name = "is_supplier",nullable = false)
+    public boolean getSupplier() {
         return this.isSupplier;
     }
 
-    public void setIsSupplier(Boolean supplier) {
+    public void setSupplier(boolean supplier) {
         this.isSupplier = supplier;
     }
 }

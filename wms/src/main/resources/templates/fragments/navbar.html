@@ -18,30 +18,27 @@
                         <a class="nav-link custom-nav-link-white dropdown-toggle" id="dropdownAdminMenuLink"
                            data-toggle="dropdown" href="/">Administration</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownAdminMenuLink">
-                            <a class="dropdown-item" href="/admin/users/create">Create new User</a>
+                            <a class="dropdown-item" href="/admin/users/create">Add User</a>
                             <a class="dropdown-item" href="/admin/users/all">View Users</a>
                         </div>
                     </div>
                 </li>
-                <li sec:authorize="isAuthenticated() && hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')"
+                <li sec:authorize="isAuthenticated()"
                     class="nav-item disabled">
                     <div class="dropdown show">
                         <a class="nav-link custom-nav-link-white dropdown-toggle" id="dropdownPartsMenuLink"
                            data-toggle="dropdown" href="/">Parts</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownPartsMenuLink">
-                            <a class="dropdown-item" href="/parts/add">Add Part</a>
-                            <a class="dropdown-item" href="/parts/deliver">Deliver Parts</a>
-                            <a class="dropdown-item" href="/parts/issue">Issue Parts</a>
+                            <a class="dropdown-item" href="/parts">All Parts</a>
+                            <a sec:authorize=" hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')" class="dropdown-item" href="/parts/add">Add Part</a>
+                            <a sec:authorize=" hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')" class="dropdown-item" href="/parts/deliver">Deliver Parts</a>
+                            <a sec:authorize=" hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')" class="dropdown-item" href="/parts/issue">Issue Parts</a>
                         </div>
                     </div>
                 </li>
                 <li sec:authorize="isAuthenticated() && hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')"
                     class="nav-item disabled">
-                    <a class="nav-link custom-nav-link-white" href="/customers">Customers</a>
-                </li>
-                <li sec:authorize="isAuthenticated() && hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')"
-                    class="nav-item disabled">
-                    <a class="nav-link custom-nav-link-white" href="/suppliers">Suppliers</a>
+                    <a class="nav-link custom-nav-link-white" href="/partners">Partners</a>
                 </li>
                 <li sec:authorize="isAuthenticated() && hasAnyAuthority('SUPER_ADMIN', 'ADMIN', 'EMPLOYEE')" class="nav-item disabled">
                     <a class="nav-link custom-nav-link-white" href="/documents">Documents</a>
@@ -53,7 +50,7 @@
             <ul class="navbar-nav ml-auto">
                 <li sec:authorize="isAuthenticated()" class="nav-item disabled">
                     <form th:action="@{/logout}" th:method="post">
-                        <button type="submit" class="btn btn-primary">Logout</button>
+                        <button type="submit" class="btn btn-dark"><i class="fas fa-sign-out-alt"></i>Logout</button>
                     </form>
                 </li>
             </ul>
