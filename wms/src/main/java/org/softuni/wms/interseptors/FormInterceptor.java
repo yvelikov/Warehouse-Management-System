@@ -12,7 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 @Component
-public class FormInterceptor extends HandlerInterceptorAdapter{
+public class FormInterceptor extends HandlerInterceptorAdapter {
+
+    private static final String FORM_MODE = "formMode";
+    private static final String EDIT = "edit";
+    private static final String DISABLE = "disable";
+    private static final String ENABLE = "enable";
+    private static final String DELIVERY_NOTES = "delivery_notes";
+    private static final String ISSUE_NOTES = "issue_notes";
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
@@ -20,7 +27,6 @@ public class FormInterceptor extends HandlerInterceptorAdapter{
 
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
-
             if (handlerMethod.hasMethodAnnotation(GetMapping.class)) {
                 GetMapping annotation = handlerMethod.getMethodAnnotation(GetMapping.class);
                 this.assignFormMode(modelAndView, annotation.path());
@@ -32,12 +38,16 @@ public class FormInterceptor extends HandlerInterceptorAdapter{
     }
 
     private void assignFormMode(ModelAndView modelAndView, String[] path) {
-        if (Arrays.stream(path).anyMatch(x -> x.contains("edit"))) {
-            modelAndView.addObject("formMode", "edit");
-        } else if (Arrays.stream(path).anyMatch(x -> x.contains("disable"))) {
-            modelAndView.addObject("formMode", "disable");
-        } else if (Arrays.stream(path).anyMatch(x -> x.contains("enable"))) {
-            modelAndView.addObject("formMode", "enable");
+        if (Arrays.stream(path).anyMatch(x -> x.contains(EDIT))) {
+            modelAndView.addObject(FORM_MODE, EDIT);
+        } else if (Arrays.stream(path).anyMatch(x -> x.contains(DISABLE))) {
+            modelAndView.addObject(FORM_MODE, DISABLE);
+        } else if (Arrays.stream(path).anyMatch(x -> x.contains(ENABLE))) {
+            modelAndView.addObject(FORM_MODE, ENABLE);
+        } else if (Arrays.stream(path).anyMatch(x -> x.contains(DELIVERY_NOTES))) {
+            modelAndView.addObject(FORM_MODE, DELIVERY_NOTES);
+        } else if (Arrays.stream(path).anyMatch(x -> x.contains(ISSUE_NOTES))) {
+            modelAndView.addObject(FORM_MODE, ISSUE_NOTES);
         }
     }
 }

@@ -4,6 +4,7 @@ import org.softuni.wms.areas.parts.entities.Part;
 import org.softuni.wms.areas.parts.models.view.PartViewModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,8 @@ public interface PartDao extends JpaRepository<Part,String>,PagingAndSortingRepo
     List<Part> getPartsByArticleCodeContainsAndNameContains(String articleCode, String name);
 
     List<Part> findAllBySupplierId(String id);
+
+    @Query(value = "SELECT * FROM parts\n" +
+            "WHERE quantity > 0", nativeQuery = true)
+    List<Part> findAllPartsOnStock();
 }

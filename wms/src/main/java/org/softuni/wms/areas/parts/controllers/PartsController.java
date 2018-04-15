@@ -2,6 +2,7 @@ package org.softuni.wms.areas.parts.controllers;
 
 import com.sun.jdi.request.InvalidRequestStateException;
 import org.softuni.wms.areas.documents.services.api.DocumentService;
+import org.softuni.wms.areas.partners.models.view.CustomerViewDto;
 import org.softuni.wms.areas.partners.models.view.SupplierViewDto;
 import org.softuni.wms.areas.partners.services.PartnerService;
 import org.softuni.wms.areas.parts.models.binding.*;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class PartsController extends BaseController {
 
     private static final String SUCCESSFUL_DELIVERY = "Parts successfully delivered!";
+    private static final String SUCCESSFUL_ISSUE = "Parts successfully issued!";
     private final PartService partService;
     private final PartnerService partnerService;
     private final DocumentService documentService;
@@ -47,16 +49,44 @@ public class PartsController extends BaseController {
         return allSuppliers.stream().filter(s -> s.getNumberOfSuppliedParts() > 0).collect(Collectors.toList());
     }
 
-    private boolean isSupplierValid(@Valid PartsDeliveryDto partsDeliveryDto) {
-        String supplierId = partsDeliveryDto.getSupplierId();
-        for (DeliveryPartDto deliveryPartDto : partsDeliveryDto.getParts()) {
-            String partSupplierId = this.partService.getSupplierId(deliveryPartDto.getId());
+    private boolean isSupplierValid(@Valid PartsOperationDto partsOperationDto) {
+        String supplierId = partsOperationDto.getPartnerId();
+        for (OperationPartDto operationPartDto : partsOperationDto.getParts()) {
+            String partSupplierId = this.partService.getSupplierId(operationPartDto.getId());
             if (!supplierId.equals(partSupplierId)) {
                 return false;
             }
         }
         return true;
     }
+
+    private PartsOperationDto initializePartsOperationDto(@Valid @ModelAttribute OperationData deliveryDataDto) {
+        String partnerId = deliveryDataDto.getPartnerId();
+        Integer numberOfRows = deliveryDataDto.getNumberOfRows();
+
+        PartsOperationDto partsOperationDto = new PartsOperationDto(new OperationPartDto[numberOfRows]);
+
+        for (int i = 0; i < partsOperationDto.getParts().length; i++) {
+            partsOperationDto.getParts()[i] = new OperationPartDto();
+        }
+
+        partsOperationDto.setPartnerId(partnerId);
+        return partsOperationDto;
+    }
+
+//    private PartsIssueDto initializePartsIssueDto(@Valid @ModelAttribute IssueDataDto issueDataDto) {
+//        String customerId = issueDataDto.getCustomerId();
+//        Integer numberOfRows = issueDataDto.getNumberOfRows();
+//
+//        PartsIssueDto partsIssueDto = new PartsIssueDto(new OperationPartDto[numberOfRows]);
+//
+//        for (int i = 0; i < partsIssueDto.getParts().length; i++) {
+//            partsIssueDto.getParts()[i] = new OperationPartDto();
+//        }
+//
+//        partsIssueDto.setCustomerId(customerId);
+//        return partsIssueDto;
+//    }
 
     @GetMapping("/parts/add")
     public ModelAndView addPart() {
@@ -139,11 +169,6 @@ public class PartsController extends BaseController {
             }
             this.partService.editPart(editPartDto);
         }
-
-        if ("cancel".equals(action)) {
-            return this.redirectToLast(request);
-        }
-
         return this.redirectToLast(request);
     }
 
@@ -151,7 +176,7 @@ public class PartsController extends BaseController {
     @GetMapping("/parts/deliver")
     public ModelAndView deliverParts() {
         List<SupplierViewDto> suppliersWithParts = this.getSupplierViewDtos();
-        return this.view("parts/deliver-parts", new HashMap<>() {{
+        return this.view("parts/deliver-parts", new HashMap<String, Object>() {{
             put("suppliersWithParts", suppliersWithParts);
             put("deliveryDataDto", new DeliveryDataDto());
         }});
@@ -159,7 +184,7 @@ public class PartsController extends BaseController {
 
 
     @PreAuthorize("hasAnyAuthority('SUPER_ADMIN,ADMIN,EMPLOYEE')")
-    @PostMapping("/parts/select_parts")
+    @PostMapping("/parts/deliver/select_parts")
     public ModelAndView deliverPartsSelect(@RequestParam String action,
                                            @Valid @ModelAttribute DeliveryDataDto deliveryDataDto,
                                            BindingResult bindingResult,
@@ -167,48 +192,36 @@ public class PartsController extends BaseController {
         if ("next".equals(action)) {
             if (bindingResult.hasErrors()) {
                 List<SupplierViewDto> suppliersWithParts = this.getSupplierViewDtos();
-                return this.view("parts/deliver-parts", new HashMap<>() {{
+                return this.view("parts/deliver-parts", new HashMap<String, Object>() {{
                     put("suppliersWithParts", suppliersWithParts);
                     put("deliveryDataDto", deliveryDataDto);
                 }});
             }
+            List<PartViewDto> partsBySupplierId = this.partService.findPartsBySupplierId(deliveryDataDto.getPartnerId());
+            PartsOperationDto partsDeliveryDto = this.initializePartsOperationDto(deliveryDataDto);
 
-            String supplierId = deliveryDataDto.getSupplierId();
-            Integer numberOfRows = deliveryDataDto.getNumberOfRows();
-
-            List<PartViewDto> partsBySupplierId = this.partService.findPartsBySupplierId(supplierId);
-            PartsDeliveryDto partsDeliveryDto = new PartsDeliveryDto(new DeliveryPartDto[numberOfRows]);
-
-            for (int i = 0; i < partsDeliveryDto.getParts().length; i++) {
-                partsDeliveryDto.getParts()[i] = new DeliveryPartDto();
-            }
-
-            partsDeliveryDto.setSupplierId(supplierId);
-
-            return this.view("parts/select-parts", new HashMap<>() {{
+            return this.view("parts/select-parts-delivery", new HashMap<String, Object>() {{
                 put("partsBySupplierId", partsBySupplierId);
                 put("partsDeliveryDto", partsDeliveryDto);
             }});
         }
 
-        if ("cancel".equals(action)) {
-            this.redirectToLast(request);
-        }
-
         return this.redirectToLast(request);
     }
+
+
 
     @PreAuthorize("hasAnyAuthority('SUPER_ADMIN,ADMIN,EMPLOYEE')")
     @PostMapping("/parts/deliver")
     public ModelAndView deliverPartsConfirm(@RequestParam String action,
-                                            @Valid @ModelAttribute PartsDeliveryDto partsDeliveryDto,
+                                            @Valid @ModelAttribute PartsOperationDto partsDeliveryDto,
                                             BindingResult bindingResult,
                                             RedirectAttributes redirectAttributes,
                                             HttpServletRequest request) {
         if ("finalize".equals(action)) {
             if (bindingResult.hasErrors()) {
-                List<PartViewDto> partsBySupplierId = this.partService.findPartsBySupplierId(partsDeliveryDto.getSupplierId());
-                return this.view("parts/select-parts", new HashMap<>() {{
+                List<PartViewDto> partsBySupplierId = this.partService.findPartsBySupplierId(partsDeliveryDto.getPartnerId());
+                return this.view("parts/select-parts-deliver", new HashMap<String, Object>() {{
                     put("partsBySupplierId", partsBySupplierId);
                     put("partsDeliveryDto", partsDeliveryDto);
                 }});
@@ -221,6 +234,65 @@ public class PartsController extends BaseController {
             this.partService.deliver(partsDeliveryDto);
             redirectAttributes.addFlashAttribute("actionResult", SUCCESSFUL_DELIVERY);
             this.documentService.generateDeliveryNote(request.getUserPrincipal(), partsDeliveryDto);
+        }
+
+        return this.redirect("/parts");
+    }
+
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN,ADMIN,EMPLOYEE')")
+    @GetMapping("/parts/issue")
+    public ModelAndView issueParts() {
+        List<CustomerViewDto> allCustomers = this.partnerService.getAllCustomers();
+        return this.view("parts/issue-parts", new HashMap<String, Object>() {{
+            put("allCustomers", allCustomers);
+            put("issueDataDto", new IssueDataDto());
+        }});
+    }
+
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN,ADMIN,EMPLOYEE')")
+    @PostMapping("/parts/issue/select_parts")
+    public ModelAndView issuePartsSelect(@RequestParam String action,
+                                           @Valid @ModelAttribute IssueDataDto issueDataDto,
+                                           BindingResult bindingResult,
+                                           HttpServletRequest request) {
+        if ("next".equals(action)) {
+            if (bindingResult.hasErrors()) {
+                List<CustomerViewDto> allCustomers = this.partnerService.getAllCustomers();
+                return this.view("parts/issue-parts", new HashMap<String, Object>() {{
+                    put("allCustomers", allCustomers);
+                    put("issueDataDto", issueDataDto);
+                }});
+            }
+            List<PartViewDto> allPartsOnStock = this.partService.findAllPartsOnStock();
+            PartsOperationDto partsIssueDto = this.initializePartsOperationDto(issueDataDto);
+
+            return this.view("parts/select-parts-issue", new HashMap<String, Object>() {{
+                put("allPartsOnStock", allPartsOnStock);
+                put("partsIssueDto", partsIssueDto);
+            }});
+        }
+        return this.redirectToLast(request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN,ADMIN,EMPLOYEE')")
+    @PostMapping("/parts/issue")
+    public ModelAndView issuePartsConfirm(@RequestParam String action,
+                                            @Valid @ModelAttribute PartsOperationDto partsIssueDto,
+                                            BindingResult bindingResult,
+                                            RedirectAttributes redirectAttributes,
+                                            HttpServletRequest request) {
+        if ("finalize".equals(action)) {
+            if (bindingResult.hasErrors()) {
+                List<PartViewDto> allPartsOnStock = this.partService.findAllPartsOnStock();
+                return this.view("parts/select-parts-issue", new HashMap<String, Object>() {{
+                    put("allPartsOnStock", allPartsOnStock);
+                    put("partsIssueDto", partsIssueDto);
+                }});
+            }
+
+            this.partService.issue(partsIssueDto);
+            redirectAttributes.addFlashAttribute("actionResult", SUCCESSFUL_ISSUE);
+            this.documentService.generateIssueNote(request.getUserPrincipal(), partsIssueDto);
         }
 
         return this.redirect("/parts");

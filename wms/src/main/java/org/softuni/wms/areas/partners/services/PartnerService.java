@@ -4,6 +4,7 @@ import org.softuni.wms.areas.partners.models.binding.AddPartnerDto;
 import org.softuni.wms.areas.partners.models.binding.EditPartnerDto;
 import org.softuni.wms.areas.partners.models.service.PartnerServiceDto;
 import org.softuni.wms.areas.partners.models.service.SupplierServiceDto;
+import org.softuni.wms.areas.partners.models.view.CustomerViewDto;
 import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.models.view.SupplierViewDto;
 import org.springframework.data.domain.Page;
@@ -35,4 +36,6 @@ public interface PartnerService {
     List<String> getAllSuppliersNames();
 
     List<SupplierViewDto> getAllSuppliers();
+
+    List<CustomerViewDto> getAllCustomers();
 }

@@ -37,7 +37,14 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
         registry.addInterceptor(this.firstUserInterceptor);
         registry.addInterceptor(this.lastUrlInterceptor);
-        registry.addInterceptor(this.formInterceptor).addPathPatterns("/admin/users/edit/{id}", "/admin/users/disable/{id}", "/admin/users/enable/{id}");
+        registry.addInterceptor(this.formInterceptor)
+                .addPathPatterns("/admin/users/edit/{id}",
+                        "/admin/users/disable/{id}",
+                        "/admin/users/enable/{id}",
+                        "/documents/delivery_notes",
+                        "/documents/issue_notes",
+                        "/documents/delivery_notes/search",
+                        "/documents/issue_notes/search");
         registry.addInterceptor(this.userAuthenticationInterceptor);
     }
 

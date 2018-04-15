@@ -3,13 +3,13 @@ package org.softuni.wms.areas.documents.models.service;
 import org.softuni.wms.areas.partners.entities.Partner;
 import org.softuni.wms.areas.users.entities.User;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class DocumentServiceDto {
 
     private String id;
     private Long documentNumber;
-    private Date date;
+    private LocalDate date;
     private User user;
     private Partner partner;
 
@@ -32,11 +32,11 @@ public class DocumentServiceDto {
         this.documentNumber = documentNumber;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return this.date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

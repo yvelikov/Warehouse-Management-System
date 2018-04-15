@@ -1,7 +1,6 @@
 package org.softuni.wms.areas.users.controllers;
 
 import org.softuni.wms.annotations.PreAuthenticateAction;
-import org.softuni.wms.areas.users.entities.enums.UserRole;
 import org.softuni.wms.areas.users.models.binding.UserDto;
 import org.softuni.wms.areas.users.models.binding.UserEditDto;
 import org.softuni.wms.areas.users.models.service.RoleServiceDto;
@@ -50,9 +49,6 @@ public class AdminController extends BaseController {
 
     @GetMapping("/users/create")
     public ModelAndView register(ModelAndView modelAndView) {
-
-        String role = UserRole.SUPER_ADMIN.name();
-
         modelAndView.setViewName("admin/users/create-user");
         List<RoleServiceDto> roles = this.roleService.findAll();
         modelAndView.addObject("roles", roles);
@@ -108,7 +104,7 @@ public class AdminController extends BaseController {
     @PreAuthenticateAction(inRole = "ADMIN")
     @GetMapping("/users/edit/{id}")
     public ModelAndView editUser(@PathVariable String id, ModelAndView modelAndView) {
-        return getUserView(this.userService.findById(id), modelAndView);
+        return this.getUserView(this.userService.findById(id), modelAndView);
     }
 
 
@@ -142,7 +138,7 @@ public class AdminController extends BaseController {
     @PreAuthenticateAction(inRole = "ADMIN")
     @GetMapping("/users/disable/{id}")
     public ModelAndView disableUser(@PathVariable String id, ModelAndView modelAndView) {
-        return getUserView(this.userService.findById(id), modelAndView);
+        return this.getUserView(this.userService.findById(id), modelAndView);
     }
 
     @PreAuthenticateAction(inRole = "ADMIN")
@@ -172,7 +168,7 @@ public class AdminController extends BaseController {
     @PreAuthenticateAction(inRole = "ADMIN")
     @GetMapping("/users/enable/{id}")
     public ModelAndView enableUser(@PathVariable String id, ModelAndView modelAndView) {
-        return getUserView(this.userService.findById(id), modelAndView);
+        return this.getUserView(this.userService.findById(id), modelAndView);
     }
 
     @PreAuthenticateAction(inRole = "ADMIN")

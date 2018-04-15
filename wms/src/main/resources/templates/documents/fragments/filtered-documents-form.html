@@ -1,0 +1,124 @@
+<th:block th:fragment="documents-form">
+    <div class=" mx-auto mt-5 card mb-3">
+        <div class="card-header bg-dark text-white">
+            <strong th:text="${formMode}.equals('delivery_notes')}? 'Delivery Notes':'Issue Notes'"></strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="justify-content-end">
+                                <form class="mb-2" th:method="GET"
+                                      th:action="@{/documents/{formMode}/search(formMode=${formMode})}">
+                                    <div class="row justify-content-between">
+                                        <div class="input-group col-md-8">
+                                            <input class="form-control py-2" type="search" name="value"
+                                                   placeholder="Search...">
+                                            <span class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="submit">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                            <!--<div class="form-check form-check-inline mx-2">-->
+                                            <!--<input class="form-check-input" type="radio" name="type" id="all"-->
+                                            <!--value="all" checked>-->
+                                            <!--<label class="form-check-label" for="all">All</label>-->
+                                            <!--</div>-->
+                                            <!--<div class="form-check form-check-inline mx-1">-->
+                                            <!--<input class="form-check-input" type="radio" name="type" id="deliveryNote"-->
+                                            <!--value="deliveryNote">-->
+                                            <!--<label class="form-check-label" for="deliveryNote">Delivery Notes</label>-->
+                                            <!--</div>-->
+                                            <!--<div class="form-check form-check-inline mx-1">-->
+                                            <!--<input class="form-check-input" type="radio" name="type" id="issueNote"-->
+                                            <!--value="issueNote">-->
+                                            <!--<label class="form-check-label" for="issueNote">Issue Notes</label>-->
+                                            <!--</div>-->
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <th:block th:if="${!allDocuments.hasContent()}">
+                                <div class="text-info" th:text="|Your request did not yield any results|"></div>
+                            </th:block>
+                            <th:block th:if="${allDocuments.hasContent()}">
+                                <table class="table table-bordered" width="100%"
+                                       cellspacing="0"
+                                       style="width: 100%">
+                                    <thead>
+                                    <tr role="row">
+                                        <th scope="col">#</th>
+                                        <th scope="col">Document Code</th>
+                                        <th scope="col">Created On</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Partner</th>
+                                        <th scope="col">Created By</th>
+                                        <th scope="col" class="text-center" colspan="2"
+                                            sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">Actions
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="doc, iter : ${allDocuments}">
+                                        <th th:text="${pageIndex + 1 < 1
+                    ? 0
+                    : pageIndex * 10 + (iter.index +1)}"></th>
+                                        <td th:text="${doc.getDocumentCode()}"></td>
+                                        <td th:text="${doc.getDate()format(dateFormatter)}"></td>
+                                        <td th:text="${formMode.equals('delivery_notes')}?'Delivery Note':Issue Note"></td>
+                                        <td th:text="${doc.getPartner()}"></td>
+                                        <td th:text="${doc.getUser()}"></td>
+                                        <td sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">
+                                            <div class="text-center">
+                                                <a class="btn btn-outline-info btn-sm mb-1 mt-1"
+                                                   th:href="@{/documents/details/{id}(id=${doc.getId()})}">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <small>Details</small>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <nav
+                                        th:with="pagesToShow = ${T(Math).min(((allDocuments.getPageable().getPageNumber()) / 5) * 5 + 5, allDocuments.getTotalPages())}">
+                                    <ul class="pagination pagination-sm justify-content-center">
+                                        <!--Previous Button-->
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               th:if="${allDocuments.hasPrevious()}"
+                                               th:href="@{/documents/{formMode}(formMode=${formMode},page=${pageIndex})}">Previous</a>
+                                        </li>
+                                        <!--Dot Button-->
+                                        <li class="page-item"><a class="page-link" th:if="${pageIndex + 1> 5}"
+                                                                 th:disabled="true">...</a></li>
+                                        <!--Pagination Navigation-->
+                                        <th:block th:each="number : ${#numbers.sequence(
+            ((allDocuments.getPageable().getPageNumber()) / 5) * 5 + 1,
+            pagesToShow)}">
+                                            <li class="page-item"
+                                                th:classappend="${number == pageIndex + 1?'active':''}"><a
+                                                    class="page-link" th:href="@{/documents/{formMode}(formMode=${formMode},page=${number})}"
+                                                    th:text="${number}"></a></li>
+                                        </th:block>
+                                        <!--Dot Button-->
+                                        <li class="page-item"><a class="page-link"
+                                                                 th:if="${pageIndex + 1 < allDocuments.getTotalPages() - 4 }"
+                                                                 th:disabled="true">...</a></li>
+                                        <!--Next Button-->
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               th:if="${allDocuments.hasNext()}"
+                                               th:href="@{/documents/{formMode}(formMode=${formMode},page=${pageIndex + 2})}">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

@@ -41,8 +41,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors()
-//                .and()
-//                .csrf()
+                .and()
+                .csrf()
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register").permitAll()
@@ -56,10 +56,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 .defaultSuccessUrl("/")
                 .failureUrl("/login?error")
-//                .and()
-//                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-//                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userDetailsService))
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .userDetailsService(this.userDetailsService)
                 .logout()

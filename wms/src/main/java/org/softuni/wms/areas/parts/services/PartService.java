@@ -2,7 +2,7 @@ package org.softuni.wms.areas.parts.services;
 
 import org.softuni.wms.areas.parts.models.binding.AddPartDto;
 import org.softuni.wms.areas.parts.models.binding.EditPartDto;
-import org.softuni.wms.areas.parts.models.binding.PartsDeliveryDto;
+import org.softuni.wms.areas.parts.models.binding.PartsOperationDto;
 import org.softuni.wms.areas.parts.models.service.PartServiceDto;
 import org.softuni.wms.areas.parts.models.view.PartViewDto;
 import org.springframework.data.domain.Page;
@@ -16,6 +16,10 @@ import java.util.List;
 @Transactional
 public interface PartService {
     void addPart(AddPartDto addPartDto);
+
+    List<PartViewDto> findAll();
+
+    List<PartViewDto> findAllPartsOnStock();
 
     Page<PartViewDto> findAllByPage(Pageable pageable);
 
@@ -31,5 +35,7 @@ public interface PartService {
 
     String getSupplierId(String id);
 
-    void deliver(PartsDeliveryDto partsDeliveryDto);
+    void deliver(PartsOperationDto partsOperationDto);
+
+    void issue(PartsOperationDto partsOperationDto);
 }

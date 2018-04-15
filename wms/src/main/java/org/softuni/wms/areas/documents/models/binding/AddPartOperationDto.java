@@ -2,13 +2,14 @@ package org.softuni.wms.areas.documents.models.binding;
 
 import org.softuni.wms.areas.documents.models.service.DocumentServiceDto;
 
-public class AddPartDeliveryDto {
+public class AddPartOperationDto {
 
     private DocumentServiceDto document;
     private String partId;
     private Long quantity;
+    private String type;
 
-    public AddPartDeliveryDto() {
+    public AddPartOperationDto() {
     }
 
     public DocumentServiceDto getDocument() {
@@ -33,5 +34,13 @@ public class AddPartDeliveryDto {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

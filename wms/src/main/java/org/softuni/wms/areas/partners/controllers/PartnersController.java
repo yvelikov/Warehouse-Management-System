@@ -100,9 +100,4 @@ public class PartnersController extends BaseController {
 
         return this.redirectToLast(request);
     }
-
-//    @GetMapping(value = "/partners/suppliers",produces = "application/json")
-//    public @ResponseBody List<PartnerViewModel> allSuppliers(){
-//        return this.partnerService.getAllSuppliers();
-//    }
 }

@@ -3,17 +3,14 @@ package org.softuni.wms.areas.parts.services;
 import org.softuni.wms.areas.partners.entities.Partner;
 import org.softuni.wms.areas.partners.models.service.SupplierServiceDto;
 import org.softuni.wms.areas.partners.services.PartnerService;
-import org.softuni.wms.areas.parts.criteria.PartSearchCriteria;
 import org.softuni.wms.areas.parts.criteria.PartSpecification;
 import org.softuni.wms.areas.parts.entities.Part;
-import org.softuni.wms.areas.parts.models.binding.AddPartDto;
-import org.softuni.wms.areas.parts.models.binding.DeliveryPartDto;
-import org.softuni.wms.areas.parts.models.binding.EditPartDto;
-import org.softuni.wms.areas.parts.models.binding.PartsDeliveryDto;
+import org.softuni.wms.areas.parts.models.binding.*;
 import org.softuni.wms.areas.parts.models.service.PartServiceDto;
 import org.softuni.wms.areas.parts.models.view.PartViewDto;
 import org.softuni.wms.areas.parts.repositories.PartDao;
 import org.softuni.wms.utils.DTOConvertUtil;
+import org.softuni.wms.utils.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,13 +41,25 @@ public class PartServiceImpl implements PartService {
         part.setUnitOfMeasure(addPartDto.getUnitOfMeasure());
         part.setDeliveryPrice(addPartDto.getDeliveryPrice());
         part.setListPrice(addPartDto.getListPrice());
-        part.setMarkUp(addPartDto.getMarkUp()/100);
+        part.setMarkUp(addPartDto.getMarkUp() / 100);
         SupplierServiceDto supplier = this.partnerService.findSupplierByName(addPartDto.getSupplier());
         Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
         part.setQuantity(0L);
         part.setSupplier(partner);
 
         this.partDao.saveAndFlush(part);
+    }
+
+    @Override
+    public List<PartViewDto> findAllPartsOnStock() {
+        List<Part> allPartsOnStock = this.partDao.findAllPartsOnStock();
+        return DTOConvertUtil.convert(allPartsOnStock, PartViewDto.class);
+    }
+
+    @Override
+    public List<PartViewDto> findAll() {
+        List<Part> allParts = this.partDao.findAll();
+        return DTOConvertUtil.convert(allParts, PartViewDto.class);
     }
 
     @Override
@@ -61,8 +70,8 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public Page<PartViewDto> findAllByPageAndSpecification(String value, String type, Pageable pageable) {
-        PartSpecification specName = new PartSpecification(new PartSearchCriteria("name", "like", value));
-        PartSpecification specArticleCode = new PartSpecification(new PartSearchCriteria("articleCode", "like", value));
+        PartSpecification specName = new PartSpecification(new SearchCriteria("name", "like", value));
+        PartSpecification specArticleCode = new PartSpecification(new SearchCriteria("articleCode", "like", value));
         PartSpecification specType = null;
         Page<Part> parts = null;
 
@@ -71,11 +80,11 @@ public class PartServiceImpl implements PartService {
                 parts = this.partDao.findAll(Specification.where(specName).or(specArticleCode), pageable);
                 break;
             case "onStock":
-                specType = new PartSpecification(new PartSearchCriteria("quantity", ">", 0));
+                specType = new PartSpecification(new SearchCriteria("quantity", ">", 0));
                 parts = this.partDao.findAll(Specification.where(specName).or(specArticleCode).and(specType), pageable);
                 break;
             case "outOfStock":
-                specType = new PartSpecification(new PartSearchCriteria("quantity", "=", 0));
+                specType = new PartSpecification(new SearchCriteria("quantity", "=", 0));
                 parts = this.partDao.findAll(Specification.where(specName).or(specArticleCode).and(specType), pageable);
                 break;
         }
@@ -89,7 +98,7 @@ public class PartServiceImpl implements PartService {
         SupplierServiceDto supplier = this.partnerService.findSupplierByName(part.getSupplier().getName());
         EditPartDto editPartDto = DTOConvertUtil.convert(part, EditPartDto.class);
         editPartDto.setSupplier(supplier.getName());
-        editPartDto.setMarkUp(editPartDto.getMarkUp()*100);
+        editPartDto.setMarkUp(editPartDto.getMarkUp() * 100);
         return editPartDto;
     }
 
@@ -106,7 +115,7 @@ public class PartServiceImpl implements PartService {
         part.setName(editPartDto.getName());
         part.setDeliveryPrice(editPartDto.getDeliveryPrice());
         part.setListPrice(editPartDto.getListPrice());
-        part.setMarkUp(editPartDto.getMarkUp()/100);
+        part.setMarkUp(editPartDto.getMarkUp() / 100);
         part.setUnitOfMeasure(editPartDto.getUnitOfMeasure());
         SupplierServiceDto supplier = this.partnerService.findSupplierByName(editPartDto.getSupplier());
         Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
@@ -130,12 +139,28 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public void deliver(PartsDeliveryDto partsDeliveryDto) {
-        for (DeliveryPartDto deliveryPartDto : partsDeliveryDto.getParts()) {
-            Part part = this.partDao.getOne(deliveryPartDto.getId());
+    public void deliver(PartsOperationDto partsOperationDto) {
+        for (OperationPartDto operationPartDto : partsOperationDto.getParts()) {
+            Part part = this.partDao.getOne(operationPartDto.getId());
             Long quantityOnStock = part.getQuantity();
-            Long deliveredQuantity = deliveryPartDto.getQuantity();
+            Long deliveredQuantity = operationPartDto.getQuantity();
             part.setQuantity(quantityOnStock + deliveredQuantity);
+            this.partDao.saveAndFlush(part);
+        }
+    }
+
+    @Override
+    public void issue(PartsOperationDto partsIssueDto) {
+        for (OperationPartDto operationPartDto : partsIssueDto.getParts()) {
+            Part part = this.partDao.getOne(operationPartDto.getId());
+            Long quantityOnStock = part.getQuantity();
+            Long issuedQuantity = operationPartDto.getQuantity();
+
+            if(quantityOnStock - issuedQuantity < 0){
+                throw new IllegalStateException();
+            }
+
+            part.setQuantity(quantityOnStock - issuedQuantity);
             this.partDao.saveAndFlush(part);
         }
     }

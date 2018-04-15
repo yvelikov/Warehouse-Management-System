@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<body class="bg-light" th:with="pageIndex = ${allDocuments.getPageable().getPageNumber()}">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <th:block th:replace="documents/fragments/documents-form"></th:block>
+</div>
+</body>
+</html>

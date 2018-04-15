@@ -5,7 +5,7 @@ import org.softuni.wms.areas.partners.entities.Partner;
 import org.softuni.wms.areas.users.entities.User;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "documents")
@@ -15,7 +15,7 @@ public abstract class Document {
 
     private String id;
     private String documentCode;
-    private Date date;
+    private LocalDate date;
     private User user;
     private Partner partner;
 
@@ -47,11 +47,11 @@ public abstract class Document {
     }
 
     @Column
-    public Date getDate() {
+    public LocalDate getDate() {
         return this.date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -40,8 +40,16 @@
                     class="nav-item disabled">
                     <a class="nav-link custom-nav-link-white" href="/partners">Partners</a>
                 </li>
-                <li sec:authorize="isAuthenticated() && hasAnyAuthority('SUPER_ADMIN', 'ADMIN', 'EMPLOYEE')" class="nav-item disabled">
-                    <a class="nav-link custom-nav-link-white" href="/documents">Documents</a>
+                <li sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN', 'EMPLOYEE')"
+                    class="nav-item disabled">
+                    <div class="dropdown show">
+                        <a class="nav-link custom-nav-link-white dropdown-toggle" id="dropdownDocumentsMenuLink"
+                           data-toggle="dropdown" href="/">Documents</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownPartsMenuLink">
+                            <a class="dropdown-item" href="/documents/delivery_notes">Delivery Notes</a>
+                            <a class="dropdown-item" href="/documents/issue_notes">Issue Notes</a>
+                        </div>
+                    </div>
                 </li>
                 <li sec:authorize="isAnonymous()" class="nav-item disabled">
                     <a class="nav-link custom-nav-link-white" href="/login">Login</a>

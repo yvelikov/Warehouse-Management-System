@@ -21,4 +21,6 @@ public interface PartnerDao extends JpaRepository<Partner, String>,
     Partner findPartnerByName(String name);
 
     List<Partner> findAllBySupplierIsTrue();
+
+    List<Partner> findAllByCustomerIsTrue();
 }

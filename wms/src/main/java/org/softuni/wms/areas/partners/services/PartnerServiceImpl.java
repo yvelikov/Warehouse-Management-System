@@ -1,16 +1,17 @@
 package org.softuni.wms.areas.partners.services;
 
-import org.softuni.wms.areas.partners.criteria.PartnerSearchCriteria;
 import org.softuni.wms.areas.partners.criteria.PartnerSpecification;
 import org.softuni.wms.areas.partners.entities.Partner;
 import org.softuni.wms.areas.partners.models.binding.AddPartnerDto;
 import org.softuni.wms.areas.partners.models.binding.EditPartnerDto;
 import org.softuni.wms.areas.partners.models.service.PartnerServiceDto;
 import org.softuni.wms.areas.partners.models.service.SupplierServiceDto;
+import org.softuni.wms.areas.partners.models.view.CustomerViewDto;
 import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.models.view.SupplierViewDto;
 import org.softuni.wms.areas.partners.repositories.PartnerDao;
 import org.softuni.wms.utils.DTOConvertUtil;
+import org.softuni.wms.utils.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,9 +47,9 @@ public class PartnerServiceImpl implements PartnerService {
 
     @Override
     public Page<PartnerViewDto> findAllByPageAndSpecification(String param, String type, Pageable pageable) {
-        PartnerSpecification specName = new PartnerSpecification(new PartnerSearchCriteria("name", "like", param));
-        PartnerSpecification specVat = new PartnerSpecification(new PartnerSearchCriteria("vatNumber", "like", param));
-        PartnerSpecification specAddress = new PartnerSpecification(new PartnerSearchCriteria("address", "like", param));
+        PartnerSpecification specName = new PartnerSpecification(new SearchCriteria("name", "like", param));
+        PartnerSpecification specVat = new PartnerSpecification(new SearchCriteria("vatNumber", "like", param));
+        PartnerSpecification specAddress = new PartnerSpecification(new SearchCriteria("address", "like", param));
         PartnerSpecification specType = null;
         Page<Partner> partners = null;
 
@@ -57,11 +58,11 @@ public class PartnerServiceImpl implements PartnerService {
                 partners = this.partnerDao.findAll(Specification.where(specName).or(specVat).or(specAddress), pageable);
                 break;
             case "customer":
-                specType = new PartnerSpecification(new PartnerSearchCriteria("customer", "=", Boolean.TRUE));
+                specType = new PartnerSpecification(new SearchCriteria("customer", "=", Boolean.TRUE));
                 partners = this.partnerDao.findAll(Specification.where(specName).or(specVat).or(specAddress).and(specType), pageable);
                 break;
             case "supplier":
-                specType = new PartnerSpecification(new PartnerSearchCriteria("supplier", "=", Boolean.TRUE));
+                specType = new PartnerSpecification(new SearchCriteria("supplier", "=", Boolean.TRUE));
                 partners = this.partnerDao.findAll(Specification.where(specName).or(specVat).or(specAddress).and(specType), pageable);
                 break;
         }
@@ -120,5 +121,11 @@ public class PartnerServiceImpl implements PartnerService {
     public List<SupplierViewDto> getAllSuppliers() {
         List<Partner> suppliers = this.partnerDao.findAllBySupplierIsTrue();
         return DTOConvertUtil.convert(suppliers, SupplierViewDto.class);
+    }
+
+    @Override
+    public List<CustomerViewDto> getAllCustomers() {
+        List<Partner> customers = this.partnerDao.findAllByCustomerIsTrue();
+        return DTOConvertUtil.convert(customers, CustomerViewDto.class);
     }
 }

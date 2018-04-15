@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<!--<script th:src="@{/js/buildyourform.js}"></script>-->
+<!--<script th:src="@{/js/getAllCustomers.js}"></script>-->
+<body class="bg-light">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <div class="card card-register mx-auto mt-5">
+        <div class="card-header bg-dark text-white"><strong>Parts Issue - Select Parts</strong></div>
+        <div class="card-body">
+            <form th:action="@{/parts/issue}" th:method="post" th:object="${partsIssueDto}">
+                <input type="hidden" name="partnerId" th:value="*{partnerId}" th:field="*{partnerId}">
+                <div class="form-group">
+                    <table class="table table-hover" width="100%"
+                           cellspacing="0"
+                           style="width: 100%">
+                        <thead>
+                        <tr role="row">
+                            <th scope="col">#</th>
+                            <th scope="col">Part Description</th>
+                            <th scope="col">On Stock</th>
+                            <th scope="col">Quantity</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="partIssueRow" th:each="part, pIndex : ${partsIssueDto.parts}">
+                            <td th:text="${pIndex.index+1}"></td>
+                            <td class="col-md-8 col-sm-5">
+                                <select class="form-control select" th:field="*{parts[__${pIndex.index}__].id}" id="part"
+                                th:classappend="${'select' + pIndex.index}">
+                                    <th:block th:each="partOnStock, i : ${allPartsOnStock}">
+                                        <option th:value="${partOnStock.id}"
+                                                th:text="${#strings.concat(partOnStock.articleCode,' - ',partOnStock.name)}"
+                                                th:classappend="${partOnStock.quantity}"></option>
+                                    </th:block>
+                                </select>
+                                <th:block th:each="error : ${#fields.errors('parts['+ pIndex.index + '].id')}">
+                                    <small class="text-danger" th:id="${'parts['+ pIndex.index + '].idHelp'}"
+                                           th:text="${error}"></small>
+                                    <br/>
+                                </th:block>
+                            </td>
+                            <td th:id="${'onStock' + pIndex.index}">
+                            </td>
+                            <td class="col-md-4 col-sm-2">
+                                <input type="number" class="form-control issueQuantity"
+                                       th:id="${'quantity'+pIndex.index}" name="quantity" min="1"
+                                       step="1"
+                                       th:field="*{parts[__${pIndex.index}__].quantity}"
+                                       data-toggle="tooltip"
+                                       data-placement="right"
+                                       title="The maximum number of rows depends on the number of parts supplied by the selected supplier."/>
+                                <th:block th:each="error : ${#fields.errors('parts['+ pIndex.index + '].quantity')}">
+                                    <small class="text-danger" th:id="${'parts['+ pIndex.index + '].quantityHelp'}"
+                                           th:text="${error}"></small>
+                                    <br/>
+                                </th:block>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-3">
+                        <button class="btn btn-primary btn-block" type="submit" th:name="action" value="finalize">
+                            Finalize
+                        </button>
+                        <button class="btn btn-outline-secondary btn-block" type="submit" th:name="action"
+                                value="cancel">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <th:block th:insert="fragments/footer"></th:block>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('.partIssueRow').each(function (i) {
+            let inputId = $('#quantity'+i).attr("id");
+            let cellId = $('#onStock'+i).attr("id");
+            let max = $(".select"+i).find('option:selected').attr('class');
+            $('#'+inputId).attr('max', max).attr('title', max + ' pcs available on stock');
+            $('#'+cellId).html(max);
+        });
+
+        $(document).on('change', function () {
+            $('.partIssueRow').each(function (i) {
+                let inputId = $('#quantity'+i).attr("id");
+                let cellId = $('#onStock'+i).attr("id");
+                let max = $(".select"+i).find('option:selected').attr('class');
+                $('#'+inputId).attr('max', max).attr('data-original-title', max + ' pcs available on stock');
+                $('#'+cellId).html(max);
+            });
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    });
+</script>
+</body>
+</html>

@@ -11,7 +11,7 @@
         <div class="card-header bg-dark text-white"><strong>Register</strong></div>
         <div class="card-body">
             <form th:action="@{/register}" th:method="post" th:object="${registerUserDto}">
-                <div class="form-group">
+                <div class="form-group" th:if="${#strings.equals(registerUserDto.getConfirmPassword(),'2')}?'asd':'asd'">
                     <label for="username">Username</label>
                     <input class="form-control" id="username" type="text" placeholder="Enter username" th:field="*{username}" th:classappend="${#fields.hasErrors('username')}?'border border-danger'"/>
                     <th:block th:each="error : ${#fields.errors('username')}">
