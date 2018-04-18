@@ -10,6 +10,10 @@ public class SearchFilter {
     public SearchFilter() {
     }
 
+    public SearchFilter(String value) {
+        this.value = value;
+    }
+
     public SearchFilter(String value, String type) {
         this.value = value;
         this.type = type;

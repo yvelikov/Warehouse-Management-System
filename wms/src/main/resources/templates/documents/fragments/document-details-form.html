@@ -1,0 +1,63 @@
+<th:block th:fragment="documents-form">
+
+    <div class=" mx-auto mt-5 card mb-3" th:object="${formMode}">
+        <div class="card-header bg-secondary text-white justify-content-around">
+            <strong th:text="|Document Details |"></strong>
+            <button class="btn btn-info btn-sm" type="button" onclick="printJS('documentDetails', 'html')">
+                <i class="fas fa-print"></i> Print
+            </button>
+        </div>
+        <p id="docId" hidden th:text="${documentDetails.id}"></p>
+        <p id="docType" hidden th:text="${#strings.toLowerCase(documentDetails.type)}"></p>
+        <div class="card-body" id="documentDetails">
+            <div class="table-responsive">
+                <div class="container-fluid">
+                    <div></div>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td th:object="${dateFormatter}"><strong th:text="|Date: |"></strong>
+                                <th:block th:text="${documentDetails.getDate().format(dateFormatter)}"></th:block>
+                            </td>
+                            <td colspan="2"><strong th:text="|Document Code: |"></strong>
+                                <th:block th:text="${documentDetails.getDocumentCode()}"></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong
+                                    th:text="${documentDetails.getType().equals('Delivery note')}? 'Supplier: ':'Customer: '"></strong>
+                                <th:block th:text="${documentDetails.getPartner()}"></th:block>
+                            </td>
+                            <td><strong
+                                    th:text="|VAT Number: |"></strong>
+                                <th:block th:text="${documentDetails.getPartnerVatNumber()}"></th:block>
+                            </td>
+                            <td><strong
+                                    th:text="|Address: |"></strong>
+                                <th:block th:text="${documentDetails.getPartnerAddress()}"></th:block>
+                            </td>
+                        </tr>
+                    </table>
+                    <h3 class="text-center" th:text="${documentDetails.getType()}"></h3>
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                        <th>#</th>
+                        <th>SKU Code</th>
+                        <th>Part Description</th>
+                        <th>Q-ty</th>
+                        <th>UoM</th>
+                        </thead>
+                        <tbody id="parts-body">
+                        </tbody>
+                    </table>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td><strong th:text="|Prepared by: |"></strong>
+                                <th:block th:text="${documentDetails.getUser()}"></th:block>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

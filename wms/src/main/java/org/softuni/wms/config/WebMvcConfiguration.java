@@ -44,7 +44,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         "/documents/delivery_notes",
                         "/documents/issue_notes",
                         "/documents/delivery_notes/search",
-                        "/documents/issue_notes/search");
+                        "/documents/issue_notes/search",
+                        "/documents/delivery_notes/details/*",
+                        "/documents/issue_notes/details/*");
         registry.addInterceptor(this.userAuthenticationInterceptor);
     }
 

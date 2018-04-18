@@ -6,6 +6,7 @@ import org.softuni.wms.areas.documents.entities.docs.IssueNote;
 import org.softuni.wms.areas.documents.entities.enums.Operation;
 import org.softuni.wms.areas.documents.models.binding.AddPartOperationDto;
 import org.softuni.wms.areas.documents.models.service.DocumentServiceDto;
+import org.softuni.wms.areas.documents.models.view.DocumentDetailsViewDto;
 import org.softuni.wms.areas.documents.models.view.DocumentViewDto;
 import org.softuni.wms.areas.documents.repositories.DeliveryNoteDao;
 import org.softuni.wms.areas.documents.repositories.IssueNoteDao;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
+import java.sql.Date;
 import java.time.LocalDate;
 
 @Service
@@ -55,13 +57,24 @@ public class DocumentServiceImpl implements DocumentService {
         this.documentNumberGenerator = documentNumberGenerator;
     }
 
-    private static DocumentViewDto apply(Document d) {
+    private static DocumentViewDto mapDocumentToDto(Document d) {
         DocumentViewDto documentViewDto = new DocumentViewDto();
         documentViewDto.setId(d.getId());
         documentViewDto.setDocumentCode(d.getDocumentCode());
         documentViewDto.setDate(d.getDate());
         documentViewDto.setPartner(d.getPartner().getName());
         documentViewDto.setUser(d.getUser().getUsername());
+        return documentViewDto;
+    }
+
+    private static DocumentViewDto mapObjectToDto(Object o) {
+        Object[] objects = (Object[]) o;
+        DocumentViewDto documentViewDto = new DocumentViewDto();
+        documentViewDto.setId((String) objects[0]);
+        documentViewDto.setDocumentCode((String) objects[1]);
+        documentViewDto.setDate((LocalDate) objects[2]);
+        documentViewDto.setPartner((String) objects[3]);
+        documentViewDto.setUser((String) objects[4]);
         return documentViewDto;
     }
 
@@ -74,6 +87,21 @@ public class DocumentServiceImpl implements DocumentService {
             addPartOperationDto.setType(type);
             this.operationService.save(addPartOperationDto);
         }
+    }
+
+    private DocumentDetailsViewDto getDocumentDetailsViewDto(Object[] document) {
+        DocumentDetailsViewDto documentDetails = new DocumentDetailsViewDto();
+        Date date = (Date) document[2];
+        LocalDate localDate = date.toLocalDate();
+        documentDetails.setId((String) document[0]);
+        documentDetails.setType((String) document[1]);
+        documentDetails.setDate(localDate);
+        documentDetails.setDocumentCode((String) document[3]);
+        documentDetails.setPartner((String) document[4]);
+        documentDetails.setPartnerVatNumber((String) document[5]);
+        documentDetails.setPartnerAddress((String) document[6]);
+        documentDetails.setUser((String) document[7]);
+        return documentDetails;
     }
 
     @Override
@@ -115,22 +143,36 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Page<DocumentViewDto> findAllDeliveryNotesByPage(Pageable pageable) {
         Page<DeliveryNote> allDeliveryNotes = this.deliveryNoteDao.findAllDocuments(pageable);
-        return allDeliveryNotes.map(DocumentServiceImpl::apply);
+        return allDeliveryNotes.map(DocumentServiceImpl::mapDocumentToDto);
     }
 
     @Override
     public Page<DocumentViewDto> findAllDeliveryNotesByPageAndSpecification(String param, Pageable pageable) {
-        return null;
+        Page<Object> all = this.deliveryNoteDao.findAllContaining(param, pageable);
+        return all.map(DocumentServiceImpl::mapObjectToDto);
     }
 
     @Override
     public Page<DocumentViewDto> findAllIssueNotesByPage(Pageable pageable) {
         Page<IssueNote> allIssueNotes = this.issueNoteDao.findAllDocuments(pageable);
-        return allIssueNotes.map(DocumentServiceImpl::apply);
+        return allIssueNotes.map(DocumentServiceImpl::mapDocumentToDto);
     }
 
     @Override
-    public Page<DocumentViewDto> findAllIssueNotesByPageAndSpecification(String value, Pageable pageable) {
-        return null;
+    public Page<DocumentViewDto> findAllIssueNotesByPageAndSpecification(String param, Pageable pageable) {
+        Page<Object> all = this.issueNoteDao.findAllContaining(param, pageable);
+        return all.map(DocumentServiceImpl::mapObjectToDto);
+    }
+
+    @Override
+    public DocumentDetailsViewDto findDeliveryNoteById(String id) {
+        Object[] document = (Object[]) this.deliveryNoteDao.findDetailsById(id);
+        return getDocumentDetailsViewDto(document);
+    }
+
+    @Override
+    public DocumentDetailsViewDto findIssueNoteById(String id) {
+        Object[] document = (Object[]) this.issueNoteDao.findDetailsById(id);
+        return getDocumentDetailsViewDto(document);
     }
 }

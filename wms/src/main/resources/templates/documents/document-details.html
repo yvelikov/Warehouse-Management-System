@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head"></th:block>
+<body class="bg-light" th:object="${documentDetails}">
+<div class="container-fluid">
+    <th:block th:insert="fragments/navbar"></th:block>
+</div>
+<div class="container">
+    <th:block th:replace="documents/fragments/document-details-form"></th:block>
+</div>
+<script>
+    $(document).ready(function () {
+
+        let docId = $('#docId', this).text();
+        let docType = $('#docType', this).text();
+
+        const deliveryUrl = '/operation/part_delivery?docId=' + docId;
+        const issueUrl = '/operation/part_delivery?docId=' + docId;
+
+        function fillTable(data) {
+            let i = 1;
+            for (let elem of data) {
+                $('#parts-body')
+                    .append('<tr>'
+                        + '<td><p>' + i + '</p></td>'
+                        + '<td><p>' + elem['articleCode'] + '</p></td>'
+                        + '<td><p>' + elem['partName'] + '</p></td>'
+                        + '<td><p>' + elem['quantity'] + '</p></td>'
+                        + '<td><p>' + elem['unitOfMeasure'] + '</p></td>'
+                        + '</tr>');
+                i++;
+            }
+        }
+
+        function extractOperationDetailsByDocId(url) {
+            fetch(url, {
+                credentials: "same-origin",
+                method: "GET",
+                redirect: "manual"
+            }).then(response => {
+                if (response.ok) {
+                    response.json().then(function (data) {
+                        fillTable(data);
+                    }).catch(function (err) {
+                        console.log('Fetch error - ', err);
+                    });
+                } else {
+                    console.warn('It seems there was a problem with your request. Status Code: ' +
+                        response.status);
+                }
+            });
+        }
+
+        switch (docType) {
+            case "delivery note":
+                extractOperationDetailsByDocId(deliveryUrl)
+                break;
+            case "issue note":
+                extractOperationDetailsByDocId(issueUrl);
+                break
+        }
+    });
+</script>
+</body>
+</html>

@@ -72,7 +72,7 @@
                                         <td sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">
                                             <div class="text-center">
                                                 <a class="btn btn-outline-info btn-sm mb-1 mt-1"
-                                                   th:href="@{/documents/details/{id}(id=${doc.getId()})}">
+                                                   th:href="@{/documents/{formMode}/details/{id}(formMode=${formMode},id=${doc.getId()})}">
                                                     <i class="fas fa-info-circle"></i>
                                                     <small>Details</small>
                                                 </a>

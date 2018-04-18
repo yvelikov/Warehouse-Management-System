@@ -1,5 +1,6 @@
 package org.softuni.wms.areas.documents.services.api;
 
+import org.softuni.wms.areas.documents.models.view.DocumentDetailsViewDto;
 import org.softuni.wms.areas.documents.models.view.DocumentViewDto;
 import org.softuni.wms.areas.parts.models.binding.PartsOperationDto;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,6 @@ public interface DocumentService {
 
     void generateIssueNote(Principal principal, PartsOperationDto partsIssueDto);
 
-//    Page<DocumentViewDto> findAllDocuments(Pageable pageable);
-
     Page<DocumentViewDto> findAllDeliveryNotesByPage(Pageable pageable);
 
     Page<DocumentViewDto> findAllDeliveryNotesByPageAndSpecification(String value, Pageable pageable);
@@ -25,4 +24,8 @@ public interface DocumentService {
     Page<DocumentViewDto> findAllIssueNotesByPage(Pageable pageable);
 
     Page<DocumentViewDto> findAllIssueNotesByPageAndSpecification(String value, Pageable pageable);
+
+    DocumentDetailsViewDto findDeliveryNoteById(String id);
+
+    DocumentDetailsViewDto findIssueNoteById(String id);
 }

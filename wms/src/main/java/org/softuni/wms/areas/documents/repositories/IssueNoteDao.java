@@ -1,9 +1,8 @@
 package org.softuni.wms.areas.documents.repositories;
 
 import org.softuni.wms.areas.documents.entities.docs.IssueNote;
+import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-
-@Transactional
+@Repository
 public interface IssueNoteDao extends BaseDocumentDao<IssueNote>{
 }

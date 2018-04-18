@@ -74,20 +74,6 @@ public class PartsController extends BaseController {
         return partsOperationDto;
     }
 
-//    private PartsIssueDto initializePartsIssueDto(@Valid @ModelAttribute IssueDataDto issueDataDto) {
-//        String customerId = issueDataDto.getCustomerId();
-//        Integer numberOfRows = issueDataDto.getNumberOfRows();
-//
-//        PartsIssueDto partsIssueDto = new PartsIssueDto(new OperationPartDto[numberOfRows]);
-//
-//        for (int i = 0; i < partsIssueDto.getParts().length; i++) {
-//            partsIssueDto.getParts()[i] = new OperationPartDto();
-//        }
-//
-//        partsIssueDto.setCustomerId(customerId);
-//        return partsIssueDto;
-//    }
-
     @GetMapping("/parts/add")
     public ModelAndView addPart() {
         List<String> suppliers = this.partnerService.getAllSuppliersNames();
@@ -133,7 +119,6 @@ public class PartsController extends BaseController {
                                     @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
 
         Page<PartViewDto> allByPageAndSpecification = this.partService.findAllByPageAndSpecification(value, type, pageable);
-
         return this.view("parts/filtered-parts", new HashMap<String, Object>() {{
             put("filteredParts", allByPageAndSpecification);
             put("filter", new SearchFilter(value, type));

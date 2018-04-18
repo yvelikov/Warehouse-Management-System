@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserViewDto> findAllSortedByUsername() {
-        List<User> users = this.userDao.findAllSortedByUsername();
+        List<User> users = this.userDao.findAllByOrderByUsername();
         if (users == null) {
             return new ArrayList<>();
         }

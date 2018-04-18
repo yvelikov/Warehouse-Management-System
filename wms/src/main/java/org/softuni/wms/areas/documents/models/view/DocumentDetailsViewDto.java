@@ -2,23 +2,18 @@ package org.softuni.wms.areas.documents.models.view;
 
 import java.time.LocalDate;
 
-public class DocumentViewDto {
+public class DocumentDetailsViewDto {
 
     private String id;
+    private String type;
     private String documentCode;
     private LocalDate date;
     private String user;
     private String partner;
+    private String partnerVatNumber;
+    private String partnerAddress;
 
-    public DocumentViewDto() {
-    }
-
-    public DocumentViewDto(String id, String type ,String documentCode, LocalDate date, String user, String partner) {
-        this.id = id;
-        this.documentCode = documentCode;
-        this.date = date;
-        this.user = user;
-        this.partner = partner;
+    public DocumentDetailsViewDto() {
     }
 
     public String getId() {
@@ -27,6 +22,14 @@ public class DocumentViewDto {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type.charAt(0) + type.substring(1).toLowerCase() + " note";
     }
 
     public String getDocumentCode() {
@@ -59,5 +62,21 @@ public class DocumentViewDto {
 
     public void setPartner(String partner) {
         this.partner = partner;
+    }
+
+    public String getPartnerVatNumber() {
+        return this.partnerVatNumber;
+    }
+
+    public void setPartnerVatNumber(String partnerVatNumber) {
+        this.partnerVatNumber = partnerVatNumber;
+    }
+
+    public String getPartnerAddress() {
+        return this.partnerAddress;
+    }
+
+    public void setPartnerAddress(String partnerAddress) {
+        this.partnerAddress = partnerAddress;
     }
 }
