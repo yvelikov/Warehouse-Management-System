@@ -1,4 +1,4 @@
-package org.softuni.wms.interseptors;
+package org.softuni.wms.interceptors;
 
 import org.softuni.wms.annotations.PreAuthenticateAction;
 import org.softuni.wms.areas.users.entities.enums.UserRole;

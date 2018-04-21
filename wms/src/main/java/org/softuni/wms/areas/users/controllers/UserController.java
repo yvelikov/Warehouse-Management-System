@@ -3,10 +3,11 @@ package org.softuni.wms.areas.users.controllers;
 import org.softuni.wms.annotations.FirstUserOnly;
 import org.softuni.wms.areas.users.models.binding.RegisterUserDto;
 import org.softuni.wms.areas.users.services.api.UserService;
+import org.softuni.wms.constants.Constants;
+import org.softuni.wms.controllers.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,10 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @Controller
-public class UserController {
+public class UserController extends BaseController {
 
-    private static final String INVALID_CREDENTIALS = "Invalid username or password";
-    private static final String LOGOUT_SUCCESSFUL = "Logged out successfully!";
     private final UserService userService;
 
     @Autowired
@@ -33,44 +32,37 @@ public class UserController {
     public ModelAndView login(@RequestParam(required = false, name = "error") String error,
                               @RequestParam(required = false, name = "logout") String logout,
                               ModelAndView modelAndView) {
-        modelAndView.setViewName("login");
-
         if (error != null) {
-            error = INVALID_CREDENTIALS;
-            modelAndView.addObject("error", error);
+            return this.view("login","error", Constants.INVALID_CREDENTIALS);
         }
 
         if (logout != null) {
-            logout = LOGOUT_SUCCESSFUL;
-            modelAndView.addObject("logout", logout);
+            return this.view("login","logout", Constants.LOGOUT_SUCCESSFUL);
         }
 
-        return modelAndView;
+        return this.view("login");
     }
 
     @FirstUserOnly
     @GetMapping("/register")
     public ModelAndView register(ModelAndView modelAndView) {
-        modelAndView.setViewName("register");
-        modelAndView.addObject("registerUserDto", new RegisterUserDto());
-        return modelAndView;
+        return this.view("register","registerUserDto", new RegisterUserDto());
     }
 
     @FirstUserOnly
     @PostMapping("/register")
-    public String registerConfirm(@Valid @ModelAttribute RegisterUserDto registerUserDto,
-                                  BindingResult bindingResult,
-                                  Model model) {
+    public ModelAndView registerConfirm(@Valid @ModelAttribute RegisterUserDto registerUserDto,
+                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("registerUserDto", registerUserDto);
-            return "register";
+            return this.view("register", "registerUserDto", registerUserDto);
         }
         if (!registerUserDto.getPassword().equals(registerUserDto.getConfirmPassword())) {
-            bindingResult.rejectValue("confirmPassword", "error.confirmPassword", "Passwords must match");
-            return "register";
+            bindingResult.rejectValue("confirmPassword", "error.confirmPassword", Constants.PASSWORD_ERROR);
+            return this.view("register", "registerUserDto", registerUserDto);
         }
+
         this.userService.registerFirstUser(registerUserDto);
 
-        return "redirect:/login";
+        return this.redirect("/login");
     }
 }

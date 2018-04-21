@@ -35,16 +35,20 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void seedRoles() {
+    public boolean seedRoles() {
+        try {
+            Set<Role> defaultRoles = new LinkedHashSet<>(Arrays.asList(
+                    new Role(UserRole.SUPER_ADMIN.name()),
+                    new Role(UserRole.ADMIN.name()),
+                    new Role(UserRole.EMPLOYEE.name()),
+                    new Role(UserRole.WAREHOUSEMAN.name())));
 
-        Set<Role> defaultRoles = new LinkedHashSet<>(Arrays.asList(
-                new Role(UserRole.SUPER_ADMIN.name()),
-                new Role(UserRole.ADMIN.name()),
-                new Role(UserRole.EMPLOYEE.name()),
-                new Role(UserRole.WAREHOUSEMAN.name())));
-
-        for (Role defaultRole : defaultRoles) {
-            this.roleDao.saveAndFlush(defaultRole);
+            for (Role defaultRole : defaultRoles) {
+                this.roleDao.saveAndFlush(defaultRole);
+            }
+            return true;
+        } catch (RuntimeException e) {
+            return false;
         }
     }
 

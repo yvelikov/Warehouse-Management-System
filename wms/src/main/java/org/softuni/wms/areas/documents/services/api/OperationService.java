@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OperationService {
 
-    void save(AddPartOperationDto addPartDeliveryDto);
+    boolean save(AddPartOperationDto addPartDeliveryDto);
 
     List<OperationViewModel> findPartDeliveryByDocumentId(String id);
 

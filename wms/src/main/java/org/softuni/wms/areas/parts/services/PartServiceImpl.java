@@ -10,7 +10,7 @@ import org.softuni.wms.areas.parts.models.service.PartServiceDto;
 import org.softuni.wms.areas.parts.models.view.PartViewDto;
 import org.softuni.wms.areas.parts.repositories.PartDao;
 import org.softuni.wms.utils.DTOConvertUtil;
-import org.softuni.wms.utils.SearchCriteria;
+import org.softuni.wms.common.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,20 +34,25 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public void addPart(AddPartDto addPartDto) {
-        Part part = new Part();
-        part.setArticleCode(addPartDto.getArticleCode());
-        part.setName(addPartDto.getName());
-        part.setUnitOfMeasure(addPartDto.getUnitOfMeasure());
-        part.setDeliveryPrice(addPartDto.getDeliveryPrice());
-        part.setListPrice(addPartDto.getListPrice());
-        part.setMarkUp(addPartDto.getMarkUp() / 100);
-        SupplierServiceDto supplier = this.partnerService.findSupplierByName(addPartDto.getSupplier());
-        Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
-        part.setQuantity(0L);
-        part.setSupplier(partner);
+    public boolean addPart(AddPartDto addPartDto) {
+        try{
+            Part part = new Part();
+            part.setArticleCode(addPartDto.getArticleCode());
+            part.setName(addPartDto.getName());
+            part.setUnitOfMeasure(addPartDto.getUnitOfMeasure());
+            part.setDeliveryPrice(addPartDto.getDeliveryPrice());
+            part.setListPrice(addPartDto.getListPrice());
+            part.setMarkUp(addPartDto.getMarkUp() / 100);
+            SupplierServiceDto supplier = this.partnerService.findSupplierByName(addPartDto.getSupplier());
+            Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
+            part.setQuantity(0L);
+            part.setSupplier(partner);
 
-        this.partDao.saveAndFlush(part);
+            this.partDao.saveAndFlush(part);
+            return true;
+        } catch (RuntimeException e){
+            return false;
+        }
     }
 
     @Override
@@ -109,19 +114,24 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public void editPart(EditPartDto editPartDto) {
-        Part part = this.partDao.getOne(editPartDto.getId());
-        part.setArticleCode(editPartDto.getArticleCode());
-        part.setName(editPartDto.getName());
-        part.setDeliveryPrice(editPartDto.getDeliveryPrice());
-        part.setListPrice(editPartDto.getListPrice());
-        part.setMarkUp(editPartDto.getMarkUp() / 100);
-        part.setUnitOfMeasure(editPartDto.getUnitOfMeasure());
-        SupplierServiceDto supplier = this.partnerService.findSupplierByName(editPartDto.getSupplier());
-        Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
-        part.setSupplier(partner);
+    public boolean editPart(EditPartDto editPartDto) {
+        try{
+            Part part = this.partDao.getOne(editPartDto.getId());
+            part.setArticleCode(editPartDto.getArticleCode());
+            part.setName(editPartDto.getName());
+            part.setDeliveryPrice(editPartDto.getDeliveryPrice());
+            part.setListPrice(editPartDto.getListPrice());
+            part.setMarkUp(editPartDto.getMarkUp() / 100);
+            part.setUnitOfMeasure(editPartDto.getUnitOfMeasure());
+            SupplierServiceDto supplier = this.partnerService.findSupplierByName(editPartDto.getSupplier());
+            Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
+            part.setSupplier(partner);
 
-        this.partDao.saveAndFlush(part);
+            this.partDao.saveAndFlush(part);
+            return true;
+        }catch (RuntimeException e){
+            return false;
+        }
     }
 
     @Override
@@ -139,29 +149,39 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public void deliver(PartsOperationDto partsOperationDto) {
-        for (OperationPartDto operationPartDto : partsOperationDto.getParts()) {
-            Part part = this.partDao.getOne(operationPartDto.getId());
-            Long quantityOnStock = part.getQuantity();
-            Long deliveredQuantity = operationPartDto.getQuantity();
-            part.setQuantity(quantityOnStock + deliveredQuantity);
-            this.partDao.saveAndFlush(part);
+    public boolean deliver(PartsOperationDto partsOperationDto) {
+        try{
+            for (OperationPartDto operationPartDto : partsOperationDto.getParts()) {
+                Part part = this.partDao.getOne(operationPartDto.getId());
+                Long quantityOnStock = part.getQuantity();
+                Long deliveredQuantity = operationPartDto.getQuantity();
+                part.setQuantity(quantityOnStock + deliveredQuantity);
+                this.partDao.saveAndFlush(part);
+            }
+            return true;
+        } catch (RuntimeException e){
+            return false;
         }
     }
 
     @Override
-    public void issue(PartsOperationDto partsIssueDto) {
-        for (OperationPartDto operationPartDto : partsIssueDto.getParts()) {
-            Part part = this.partDao.getOne(operationPartDto.getId());
-            Long quantityOnStock = part.getQuantity();
-            Long issuedQuantity = operationPartDto.getQuantity();
+    public boolean issue(PartsOperationDto partsIssueDto) {
+        try{
+            for (OperationPartDto operationPartDto : partsIssueDto.getParts()) {
+                Part part = this.partDao.getOne(operationPartDto.getId());
+                Long quantityOnStock = part.getQuantity();
+                Long issuedQuantity = operationPartDto.getQuantity();
 
-            if(quantityOnStock - issuedQuantity < 0){
-                throw new IllegalStateException();
+                if(quantityOnStock - issuedQuantity < 0){
+                    throw new IllegalStateException();
+                }
+
+                part.setQuantity(quantityOnStock - issuedQuantity);
+                this.partDao.saveAndFlush(part);
             }
-
-            part.setQuantity(quantityOnStock - issuedQuantity);
-            this.partDao.saveAndFlush(part);
+            return true;
+        }catch (RuntimeException e){
+            return false;
         }
     }
 }

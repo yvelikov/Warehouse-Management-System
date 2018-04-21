@@ -105,39 +105,49 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void generateDeliveryNote(Principal principal, PartsOperationDto partsOperationDto) {
-        DeliveryNote deliveryNote = new DeliveryNote();
-        User user = (User) this.userDetails.loadUserByUsername(principal.getName());
-        PartnerServiceDto partnerServiceDto = this.partnerService.findById(partsOperationDto.getPartnerId());
-        Partner partner = DTOConvertUtil.convert(partnerServiceDto, Partner.class);
+    public boolean generateDeliveryNote(Principal principal, PartsOperationDto partsOperationDto) {
+        try {
+            DeliveryNote deliveryNote = new DeliveryNote();
+            User user = (User) this.userDetails.loadUserByUsername(principal.getName());
+            PartnerServiceDto partnerServiceDto = this.partnerService.findById(partsOperationDto.getPartnerId());
+            Partner partner = DTOConvertUtil.convert(partnerServiceDto, Partner.class);
 
-        deliveryNote.setUser(user);
-        deliveryNote.setDate(LocalDate.now());
-        deliveryNote.setPartner(partner);
-        deliveryNote.setDocumentCode(String.format(DOCUMENT_CODE_FORMAT, this.documentNumberGenerator.next()));
-        this.deliveryNoteDao.save(deliveryNote);
+            deliveryNote.setUser(user);
+            deliveryNote.setDate(LocalDate.now());
+            deliveryNote.setPartner(partner);
+            deliveryNote.setDocumentCode(String.format(DOCUMENT_CODE_FORMAT, this.documentNumberGenerator.next()));
+            this.deliveryNoteDao.save(deliveryNote);
 
-        DocumentServiceDto documentServiceDto = DTOConvertUtil.convert(deliveryNote, DocumentServiceDto.class);
+            DocumentServiceDto documentServiceDto = DTOConvertUtil.convert(deliveryNote, DocumentServiceDto.class);
 
-        this.createPartOperations(partsOperationDto, documentServiceDto, Operation.DELIVERY.name());
+            this.createPartOperations(partsOperationDto, documentServiceDto, Operation.DELIVERY.name());
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     @Override
-    public void generateIssueNote(Principal principal, PartsOperationDto partsOperationDto) {
-        IssueNote issueNote = new IssueNote();
-        User user = (User) this.userDetails.loadUserByUsername(principal.getName());
-        PartnerServiceDto partnerServiceDto = this.partnerService.findById(partsOperationDto.getPartnerId());
-        Partner partner = DTOConvertUtil.convert(partnerServiceDto, Partner.class);
+    public boolean generateIssueNote(Principal principal, PartsOperationDto partsOperationDto) {
+        try {
+            IssueNote issueNote = new IssueNote();
+            User user = (User) this.userDetails.loadUserByUsername(principal.getName());
+            PartnerServiceDto partnerServiceDto = this.partnerService.findById(partsOperationDto.getPartnerId());
+            Partner partner = DTOConvertUtil.convert(partnerServiceDto, Partner.class);
 
-        issueNote.setUser(user);
-        issueNote.setDate(LocalDate.now());
-        issueNote.setPartner(partner);
-        issueNote.setDocumentCode(String.format(DOCUMENT_CODE_FORMAT, this.documentNumberGenerator.next()));
-        this.issueNoteDao.save(issueNote);
+            issueNote.setUser(user);
+            issueNote.setDate(LocalDate.now());
+            issueNote.setPartner(partner);
+            issueNote.setDocumentCode(String.format(DOCUMENT_CODE_FORMAT, this.documentNumberGenerator.next()));
+            this.issueNoteDao.save(issueNote);
 
-        DocumentServiceDto documentServiceDto = DTOConvertUtil.convert(issueNote, DocumentServiceDto.class);
+            DocumentServiceDto documentServiceDto = DTOConvertUtil.convert(issueNote, DocumentServiceDto.class);
 
-        this.createPartOperations(partsOperationDto, documentServiceDto, Operation.ISSUE.name());
+            this.createPartOperations(partsOperationDto, documentServiceDto, Operation.ISSUE.name());
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     @Override

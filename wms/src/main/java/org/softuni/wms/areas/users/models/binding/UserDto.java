@@ -1,33 +1,35 @@
 package org.softuni.wms.areas.users.models.binding;
 
+import org.softuni.wms.constants.Constants;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
 public class UserDto {
 
-    @NotEmpty(message = "Username cannot be empty")
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 symbols long")
+    @NotEmpty(message = Constants.USERNAME_NOT_EMPTY)
+    @Size(min = 3, max = 20, message = Constants.USERNAME_LENGTH)
     private String username;
 
-    @NotEmpty(message = "First name cannot be empty")
+    @NotEmpty(message = Constants.FIST_NAME_NOT_EMPTY)
     private String firstName;
 
-    @NotEmpty(message = "Last name cannot be empty")
+    @NotEmpty(message = Constants.LAST_NAME_NOT_EMPTY)
     private String lastName;
 
-    @NotEmpty(message = "Email cannot be empty")
+    @NotEmpty(message = Constants.EMAIL_NOT_EMPTY)
     private String email;
 
-    @NotEmpty(message = "At least one role must be selected")
+    @NotEmpty(message = Constants.AT_LEAST_ONE_ROLE)
     private Set<String> authorities;
 
-    @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 4, max = 32, message = "Password must be between 4 and 32 symbols long")
+    @NotEmpty(message = Constants.PASSWORD_NOT_EMPTY)
+    @Size(min = 4, max = 32, message = Constants.PASSWORD_LENGTH)
     private String password;
 
-    @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 4, max = 32, message = "Password must be between 4 and 32 symbols long")
+    @NotEmpty(message = Constants.PASSWORD_NOT_EMPTY)
+    @Size(min = 4, max = 32, message = Constants.PASSWORD_LENGTH)
     private String confirmPassword;
 
     public UserDto() {

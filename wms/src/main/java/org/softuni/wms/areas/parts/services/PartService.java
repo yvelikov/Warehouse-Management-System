@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @Transactional
 public interface PartService {
-    void addPart(AddPartDto addPartDto);
+    boolean addPart(AddPartDto addPartDto);
 
     List<PartViewDto> findAll();
 
@@ -29,13 +29,13 @@ public interface PartService {
 
     PartServiceDto findById(String id);
 
-    void editPart(EditPartDto editPartDto);
+    boolean editPart(EditPartDto editPartDto);
 
     List<PartViewDto> findPartsBySupplierId(String id);
 
     String getSupplierId(String id);
 
-    void deliver(PartsOperationDto partsOperationDto);
+    boolean deliver(PartsOperationDto partsOperationDto);
 
-    void issue(PartsOperationDto partsOperationDto);
+    boolean issue(PartsOperationDto partsOperationDto);
 }

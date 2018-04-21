@@ -13,6 +13,7 @@ import org.softuni.wms.areas.documents.services.api.OperationService;
 import org.softuni.wms.areas.parts.entities.Part;
 import org.softuni.wms.areas.parts.models.service.PartServiceDto;
 import org.softuni.wms.areas.parts.services.PartService;
+import org.softuni.wms.constants.Constants;
 import org.softuni.wms.utils.DTOConvertUtil;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,6 @@ import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 @Transactional
@@ -48,29 +48,33 @@ public class OperationServiceImpl implements OperationService {
         return operationViewModelList;
     }
 
-
     @Override
-    public void save(AddPartOperationDto addPartDeliveryDto) {
-        Operation operation = null;
-        Document document = null;
-        switch (addPartDeliveryDto.getType()) {
-            case "DELIVERY":
-                operation = new PartDelivery();
-                document = DTOConvertUtil.convert(addPartDeliveryDto.getDocument(), DeliveryNote.class);
-                break;
-            case "ISSUE":
-                operation = new PartIssue();
-                document = DTOConvertUtil.convert(addPartDeliveryDto.getDocument(), IssueNote.class);
-                break;
+    public boolean save(AddPartOperationDto addPartDeliveryDto) {
+        try {
+            Operation operation = null;
+            Document document = null;
+            switch (addPartDeliveryDto.getType()) {
+                case Constants.DELIVERY:
+                    operation = new PartDelivery();
+                    document = DTOConvertUtil.convert(addPartDeliveryDto.getDocument(), DeliveryNote.class);
+                    break;
+                case Constants.ISSUE:
+                    operation = new PartIssue();
+                    document = DTOConvertUtil.convert(addPartDeliveryDto.getDocument(), IssueNote.class);
+                    break;
+            }
+
+            PartServiceDto partServiceDto = this.partService.findById(addPartDeliveryDto.getPartId());
+            Part part = DTOConvertUtil.convert(partServiceDto, Part.class);
+            operation.setDocument(document);
+            operation.setPart(part);
+            operation.setQuantity(addPartDeliveryDto.getQuantity());
+
+            this.operationDao.saveAndFlush(operation);
+            return true;
+        }catch (RuntimeException e){
+            return false;
         }
-
-        PartServiceDto partServiceDto = this.partService.findById(addPartDeliveryDto.getPartId());
-        Part part = DTOConvertUtil.convert(partServiceDto, Part.class);
-        operation.setDocument(document);
-        operation.setPart(part);
-        operation.setQuantity(addPartDeliveryDto.getQuantity());
-
-        this.operationDao.saveAndFlush(operation);
     }
 
     @Override

@@ -15,19 +15,23 @@ import java.util.List;
 @Transactional
 public interface UserService extends UserDetailsService{
 
-    void register(UserDto userDto);
+    boolean addUser(UserDto userDto);
 
     List<UserViewDto> findAllSortedByUsername();
 
     UserEditDto findById(String id);
 
-    void edit(@Valid UserEditDto userEditDto);
+    boolean edit(@Valid UserEditDto userEditDto);
 
     Long getUsersCount();
 
-    void registerFirstUser(@Valid RegisterUserDto registerUserDto);
+    boolean registerFirstUser(@Valid RegisterUserDto registerUserDto);
 
-    void disable(String id);
+    boolean disable(String id);
 
-    void enable(String id);
+    boolean enable(String id);
+
+    UserViewDto findByUsername(String username);
+
+    UserViewDto findUserByEmail(String email);
 }

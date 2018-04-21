@@ -3,9 +3,8 @@ package org.softuni.wms.areas.documents.controllers;
 import org.softuni.wms.areas.documents.models.view.DocumentDetailsViewDto;
 import org.softuni.wms.areas.documents.models.view.DocumentViewDto;
 import org.softuni.wms.areas.documents.services.api.DocumentService;
-import org.softuni.wms.areas.documents.services.api.OperationService;
+import org.softuni.wms.common.SearchFilter;
 import org.softuni.wms.controllers.BaseController;
-import org.softuni.wms.utils.SearchFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +27,10 @@ public class DocumentsController extends BaseController {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     private final DocumentService documentService;
-    private final OperationService operationService;
 
     @Autowired
-    public DocumentsController(DocumentService documentService, OperationService operationService) {
+    public DocumentsController(DocumentService documentService) {
         this.documentService = documentService;
-        this.operationService = operationService;
     }
 
     @GetMapping("/documents/delivery_notes")

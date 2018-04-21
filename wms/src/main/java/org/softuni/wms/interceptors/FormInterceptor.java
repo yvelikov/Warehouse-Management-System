@@ -1,4 +1,4 @@
-package org.softuni.wms.interseptors;
+package org.softuni.wms.interceptors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;

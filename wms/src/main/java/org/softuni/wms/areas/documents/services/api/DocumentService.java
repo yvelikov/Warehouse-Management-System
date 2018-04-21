@@ -13,9 +13,9 @@ import java.security.Principal;
 @Service
 @Transactional
 public interface DocumentService {
-    void generateDeliveryNote(Principal principal, PartsOperationDto partsDeliveryDto);
+    boolean generateDeliveryNote(Principal principal, PartsOperationDto partsDeliveryDto);
 
-    void generateIssueNote(Principal principal, PartsOperationDto partsIssueDto);
+    boolean generateIssueNote(Principal principal, PartsOperationDto partsIssueDto);
 
     Page<DocumentViewDto> findAllDeliveryNotesByPage(Pageable pageable);
 

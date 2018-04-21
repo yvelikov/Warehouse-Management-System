@@ -1,4 +1,4 @@
-package org.softuni.wms.utils;
+package org.softuni.wms.common;
 
 public class SearchFilter {
 

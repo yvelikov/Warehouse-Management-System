@@ -1,14 +1,27 @@
 package org.softuni.wms.controllers;
 
-import org.softuni.wms.interseptors.LastUrlInterceptor;
+import org.softuni.wms.interceptors.LastUrlInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 
 public abstract class BaseController {
+
+    private static List<String> routesToSkip = List.of("add", "disable", "enable", "create", "edit", "deliver", "issue");
+
+    private boolean containsSkipRoute(String lastUrl) {
+        for (String route : routesToSkip) {
+            if(lastUrl.contains(route)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected ModelAndView view(String view) {
         return new ModelAndView(view);
     }
@@ -36,9 +49,10 @@ public abstract class BaseController {
     protected ModelAndView redirectToLast(HttpServletRequest request) {
         Deque visitedPages = (ArrayDeque) request.getSession().getAttribute(LastUrlInterceptor.LAST_VISITED_PAGES);
         visitedPages.pop();
-        String lastUrl = (String) visitedPages.pop();;
+        String lastUrl = (String) visitedPages.pop();
+
         while (true) {
-            if (lastUrl.contains("create") || lastUrl.contains("add") || lastUrl.contains("search") || lastUrl.contains("edit")) {
+            if (containsSkipRoute(lastUrl)) {
                 lastUrl = (String) visitedPages.pop();
             } else {
                 break;

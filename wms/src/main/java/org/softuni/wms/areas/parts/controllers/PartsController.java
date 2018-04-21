@@ -8,8 +8,9 @@ import org.softuni.wms.areas.partners.services.PartnerService;
 import org.softuni.wms.areas.parts.models.binding.*;
 import org.softuni.wms.areas.parts.models.view.PartViewDto;
 import org.softuni.wms.areas.parts.services.PartService;
+import org.softuni.wms.constants.Constants;
 import org.softuni.wms.controllers.BaseController;
-import org.softuni.wms.utils.SearchFilter;
+import org.softuni.wms.common.SearchFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +31,6 @@ import java.util.stream.Collectors;
 @Controller
 public class PartsController extends BaseController {
 
-    private static final String SUCCESSFUL_DELIVERY = "Parts successfully delivered!";
-    private static final String SUCCESSFUL_ISSUE = "Parts successfully issued!";
     private final PartService partService;
     private final PartnerService partnerService;
     private final DocumentService documentService;
@@ -216,9 +215,10 @@ public class PartsController extends BaseController {
                 throw new InvalidRequestStateException();
             }
 
-            this.partService.deliver(partsDeliveryDto);
-            redirectAttributes.addFlashAttribute("actionResult", SUCCESSFUL_DELIVERY);
-            this.documentService.generateDeliveryNote(request.getUserPrincipal(), partsDeliveryDto);
+            if(this.partService.deliver(partsDeliveryDto)){
+                redirectAttributes.addFlashAttribute("actionResult", Constants.SUCCESSFUL_DELIVERY);
+                this.documentService.generateDeliveryNote(request.getUserPrincipal(), partsDeliveryDto);
+            }
         }
 
         return this.redirect("/parts");
@@ -275,9 +275,11 @@ public class PartsController extends BaseController {
                 }});
             }
 
-            this.partService.issue(partsIssueDto);
-            redirectAttributes.addFlashAttribute("actionResult", SUCCESSFUL_ISSUE);
-            this.documentService.generateIssueNote(request.getUserPrincipal(), partsIssueDto);
+            if(this.partService.issue(partsIssueDto)){
+                redirectAttributes.addFlashAttribute("actionResult", Constants.SUCCESSFUL_ISSUE);
+                this.documentService.generateIssueNote(request.getUserPrincipal(), partsIssueDto);
+            }
+
         }
 
         return this.redirect("/parts");

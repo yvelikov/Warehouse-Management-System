@@ -2,6 +2,7 @@ package org.softuni.wms.areas.users.services.impl;
 
 import org.softuni.wms.areas.users.entities.Role;
 import org.softuni.wms.areas.users.entities.User;
+import org.softuni.wms.areas.users.entities.enums.UserRole;
 import org.softuni.wms.areas.users.models.binding.RegisterUserDto;
 import org.softuni.wms.areas.users.models.binding.UserDto;
 import org.softuni.wms.areas.users.models.binding.UserEditDto;
@@ -50,25 +51,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(UserDto userDto) {
-        User user = DTOConvertUtil.convert(userDto, User.class);
-        user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
-        user.setEnabled(true);
+    public boolean addUser(UserDto userDto) {
+        try {
+            User user = DTOConvertUtil.convert(userDto, User.class);
+            user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
+            user.setAccountNonExpired(true);
+            user.setAccountNonLocked(true);
+            user.setCredentialsNonExpired(true);
+            user.setEnabled(true);
 
-        Set<Role> roles = new HashSet<>();
+            Set<Role> roles = new HashSet<>();
 
-        for (String roleName : userDto.getAuthorities()) {
-            RoleServiceDto roleDto = this.roleService.findByAuthority(roleName);
-            Role role = DTOConvertUtil.convert(roleDto, Role.class);
-            roles.add(role);
+            for (String roleName : userDto.getAuthorities()) {
+                RoleServiceDto roleDto = this.roleService.findByAuthority(roleName);
+                Role role = DTOConvertUtil.convert(roleDto, Role.class);
+                roles.add(role);
+            }
+
+            user.setAuthorities(roles);
+
+            this.userDao.saveAndFlush(user);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
         }
-
-        user.setAuthorities(roles);
-
-        this.userDao.saveAndFlush(user);
     }
 
     @Override
@@ -110,23 +116,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void edit(@Valid UserEditDto userEditDto) {
-        User user = this.userDao.getOne(userEditDto.getId());
-        Set<Role> userRoles = new HashSet<>();
+    public boolean edit(@Valid UserEditDto userEditDto) {
+        try {
+            User user = this.userDao.getOne(userEditDto.getId());
+            Set<Role> userRoles = new HashSet<>();
 
-        for (String roleName : userEditDto.getAuthorities()) {
-            RoleServiceDto roleDto = this.roleService.findByAuthority(roleName);
-            Role role = DTOConvertUtil.convert(roleDto, Role.class);
-            userRoles.add(role);
+            for (String roleName : userEditDto.getAuthorities()) {
+                RoleServiceDto roleDto = this.roleService.findByAuthority(roleName);
+                Role role = DTOConvertUtil.convert(roleDto, Role.class);
+                userRoles.add(role);
+            }
+
+            user.setUsername(userEditDto.getUsername());
+            user.setFirstName(userEditDto.getFirstName());
+            user.setLastName(userEditDto.getLastName());
+            user.setEmail(userEditDto.getEmail());
+            user.setAuthorities(userRoles);
+
+            this.userDao.saveAndFlush(user);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
         }
-
-        user.setUsername(userEditDto.getUsername());
-        user.setFirstName(userEditDto.getFirstName());
-        user.setLastName(userEditDto.getLastName());
-        user.setEmail(userEditDto.getEmail());
-        user.setAuthorities(userRoles);
-
-        this.userDao.saveAndFlush(user);
     }
 
     @Override
@@ -135,47 +146,80 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerFirstUser(@Valid RegisterUserDto registerUserDto) {
-        User user = DTOConvertUtil.convert(registerUserDto, User.class);
-        user.setPassword(this.passwordEncoder.encode(registerUserDto.getPassword()));
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
-        user.setEnabled(true);
+    public boolean registerFirstUser(@Valid RegisterUserDto registerUserDto) {
+        try {
+            User user = DTOConvertUtil.convert(registerUserDto, User.class);
+            user.setPassword(this.passwordEncoder.encode(registerUserDto.getPassword()));
+            user.setAccountNonExpired(true);
+            user.setAccountNonLocked(true);
+            user.setCredentialsNonExpired(true);
+            user.setEnabled(true);
 
-        Set<Role> roles = new HashSet<>();
+            Set<Role> roles = new HashSet<>();
 
-        RoleServiceDto roleDto = this.roleService.findByAuthority("SUPER_ADMIN");
-        Role role = DTOConvertUtil.convert(roleDto, Role.class);
-        roles.add(role);
-        user.setAuthorities(roles);
+            RoleServiceDto roleDto = this.roleService.findByAuthority(UserRole.SUPER_ADMIN.name());
+            Role role = DTOConvertUtil.convert(roleDto, Role.class);
+            roles.add(role);
+            user.setAuthorities(roles);
 
-        this.userDao.saveAndFlush(user);
+            this.userDao.saveAndFlush(user);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     @Override
-    public void disable(String id) {
-        User user = this.userDao.getOne(id);
-        user.getAuthorities().forEach(r -> {
-            if(r.getAuthority().equals("SUPER_ADMIN")){
-             throw new IllegalStateException();
-            }
-        });
+    public boolean disable(String id) {
+        try {
+            User user = this.userDao.getOne(id);
+            user.getAuthorities().forEach(r -> {
+                if (r.getAuthority().equals(UserRole.SUPER_ADMIN.name())) {
+                    throw new IllegalStateException();
+                }
+            });
 
-        user.setEnabled(false);
-        this.userDao.saveAndFlush(user);
+            user.setEnabled(false);
+            this.userDao.saveAndFlush(user);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     @Override
-    public void enable(String id) {
-        User user = this.userDao.getOne(id);
-        user.getAuthorities().forEach(r -> {
-            if(r.getAuthority().equals("SUPER_ADMIN")){
-                throw new IllegalStateException();
-            }
-        });
+    public boolean enable(String id) {
+        try {
+            User user = this.userDao.getOne(id);
+            user.getAuthorities().forEach(r -> {
+                if (r.getAuthority().equals(UserRole.SUPER_ADMIN.name())) {
+                    throw new IllegalStateException();
+                }
+            });
 
-        user.setEnabled(true);
-        this.userDao.saveAndFlush(user);
+            user.setEnabled(true);
+            this.userDao.saveAndFlush(user);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public UserViewDto findByUsername(String username) {
+        User user = this.userDao.findByUsername(username);
+        if(user != null){
+            return DTOConvertUtil.convert(user, UserViewDto.class);
+        }
+        return null;
+    }
+
+    @Override
+    public UserViewDto findUserByEmail(String email) {
+        User user = this.userDao.findByEmail(email);
+        if(user != null){
+            return DTOConvertUtil.convert(user, UserViewDto.class);
+        }
+        return null;
     }
 }

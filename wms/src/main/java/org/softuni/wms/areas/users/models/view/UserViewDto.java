@@ -61,4 +61,9 @@ public class UserViewDto {
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
     }
+
+    @Override
+    public String toString() {
+        return this.username;
+    }
 }

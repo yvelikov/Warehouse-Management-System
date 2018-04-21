@@ -73,7 +73,6 @@ public class User implements UserDetails {
         this.firstName = firstName;
     }
 
-
     public String getLastName() {
         return this.lastName;
     }
@@ -141,5 +140,10 @@ public class User implements UserDetails {
 
     public void setAuthorities(Set<Role> authorities) {
         this.authorities = authorities;
+    }
+
+    @Override
+    public String toString() {
+        return this.username + "(" + this.firstName + " " + this.lastName + ")";
     }
 }

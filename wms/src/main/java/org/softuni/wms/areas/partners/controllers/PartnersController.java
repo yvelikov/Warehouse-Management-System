@@ -5,7 +5,7 @@ import org.softuni.wms.areas.partners.models.binding.EditPartnerDto;
 import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.services.PartnerService;
 import org.softuni.wms.controllers.BaseController;
-import org.softuni.wms.utils.SearchFilter;
+import org.softuni.wms.common.SearchFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,7 @@
 package org.softuni.wms.areas.partners.criteria;
 
 import org.softuni.wms.areas.partners.entities.Partner;
-import org.softuni.wms.utils.SearchCriteria;
+import org.softuni.wms.common.SearchCriteria;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

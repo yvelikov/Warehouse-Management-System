@@ -1,4 +1,4 @@
-package org.softuni.wms.interseptors;
+package org.softuni.wms.interceptors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -20,7 +20,7 @@ public class LastUrlInterceptor extends HandlerInterceptorAdapter{
 
         if(handler instanceof HandlerMethod){
             if(null == request.getSession(true).getAttribute(LAST_VISITED_PAGES )){
-                Deque<String> views = new ArrayDeque<>();
+                ArrayDeque<String> views = new ArrayDeque<>();
                 request.getSession(true).setAttribute(LAST_VISITED_PAGES, views);
             }
             Deque<String> lastViews = (ArrayDeque<String>) request.getSession(true).getAttribute(LAST_VISITED_PAGES);

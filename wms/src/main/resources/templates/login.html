@@ -27,7 +27,6 @@
         <div class="card-header bg-dark text-white"><strong>Login</strong></div>
         <div class="card-body">
             <form th:action="@{/login}" th:method="post">
-            <form>
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input class="form-control" id="username" name="username" type="text" placeholder="Enter username">
@@ -41,32 +40,6 @@
         </div>
     </div>
 </div>
-<!--<script>-->
-
-    <!--let auth = null;-->
-
-    <!--$('#login-button').click(function (ev)-->
-    <!--{-->
-        <!--ev.preventDefault();-->
-        <!--let username = $('#username').val();-->
-        <!--let password = $('#password').val();-->
-
-        <!--$.ajax({-->
-            <!--type: 'POST',-->
-            <!--url: 'http://localhost:8000/login',-->
-            <!--headers: {-->
-                <!--"Content-Type": "application/json"-->
-            <!--},-->
-            <!--data: JSON.stringify({-->
-                <!--"username":username,-->
-                <!--"password":password-->
-            <!--})-->
-        <!--}).done(function (body) {-->
-            <!--auth = body['Authorization'];-->
-            <!--console.log(auth);-->
-        <!--});-->
-    <!--})-->
-<!--</script>-->
 <th:block th:insert="fragments/footer"></th:block>
 </body>
 </html>

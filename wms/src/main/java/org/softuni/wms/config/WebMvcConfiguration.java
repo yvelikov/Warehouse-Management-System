@@ -1,9 +1,9 @@
 package org.softuni.wms.config;
 
-import org.softuni.wms.interseptors.FirstUserInterceptor;
-import org.softuni.wms.interseptors.FormInterceptor;
-import org.softuni.wms.interseptors.LastUrlInterceptor;
-import org.softuni.wms.interseptors.UserAuthenticationInterceptor;
+import org.softuni.wms.interceptors.FirstUserInterceptor;
+import org.softuni.wms.interceptors.FormInterceptor;
+import org.softuni.wms.interceptors.LastUrlInterceptor;
+import org.softuni.wms.interceptors.UserAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.stereotype.Component;

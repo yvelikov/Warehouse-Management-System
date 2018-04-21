@@ -5,15 +5,18 @@ import javax.validation.constraints.NotNull;
 
 public class DeliveryDataDto implements OperationData{
 
-    @NotNull(message = "You need to select a supplier.")
+    private static final String CUSTOMER_ERROR = "You need to select a supplier.";
+    private static final String ROWS_ERROR = "You need at least one row to execute a delivery.";
+
+    @NotNull(message = CUSTOMER_ERROR)
     private String supplierId;
-    @NotNull(message = "You need at least one row to execute a delivery.")
-    @Min(value = 1, message = "You need at least one row to execute a delivery.")
+
+    @NotNull(message = ROWS_ERROR)
+    @Min(value = 1, message = ROWS_ERROR)
     private Integer numberOfRows;
 
     public DeliveryDataDto() {
     }
-
 
     @Override
     public String getPartnerId() {

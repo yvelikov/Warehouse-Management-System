@@ -43,7 +43,7 @@ public class Partner {
         this.name = name;
     }
 
-    @Column
+    @Column(nullable = false, unique = true)
     public String getVatNumber() {
         return this.vatNumber;
     }

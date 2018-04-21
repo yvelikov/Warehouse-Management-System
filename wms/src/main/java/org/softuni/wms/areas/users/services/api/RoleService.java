@@ -13,7 +13,7 @@ public interface RoleService {
 
     List<RoleServiceDto> findAll();
 
-    void seedRoles();
+    boolean seedRoles();
 
     List<RoleServiceDto> findAllRolesFilter(String authority);
 

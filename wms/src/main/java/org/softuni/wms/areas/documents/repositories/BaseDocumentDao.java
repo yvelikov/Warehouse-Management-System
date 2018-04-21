@@ -19,10 +19,10 @@ public interface BaseDocumentDao<E extends Document> extends JpaRepository<E, St
     Page<E> findAllDocuments(Pageable pageable);
 
 
-    @Query("SELECT d.id, d.documentCode, d.date, p.name, u.username from #{#entityName} as d " +
-            "join Partner as p on p.id = d.partner.id " +
-            "join User as u on u.id = d.user.id " +
-            "where d.documentCode like %?1% or p.name like %?1% or u.username like %?1%")
+    @Query("SELECT d.id, d.documentCode, d.date, p.name, u.username FROM #{#entityName} AS d " +
+            "JOIN Partner AS p ON p.id = d.partner.id " +
+            "JOIN User AS u ON u.id = d.user.id " +
+            "WHERE d.documentCode LIKE %?1% OR p.name LIKE %?1% OR u.username LIKE %?1%")
     Page<Object> findAllContaining(String str, Pageable pageable);
 
     @Query(value = "SELECT d.id, d.type, d.date, d.document_number, p.name, p.vat_number, p.address, concat(u.first_name,' ',u.last_name) FROM documents AS d\n" +

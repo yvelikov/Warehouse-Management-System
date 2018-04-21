@@ -11,7 +11,7 @@ import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.models.view.SupplierViewDto;
 import org.softuni.wms.areas.partners.repositories.PartnerDao;
 import org.softuni.wms.utils.DTOConvertUtil;
-import org.softuni.wms.utils.SearchCriteria;
+import org.softuni.wms.common.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,9 +34,14 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public void addPartner(AddPartnerDto addPartnerDto) {
-        Partner partner = DTOConvertUtil.convert(addPartnerDto, Partner.class);
-        this.partnerDao.saveAndFlush(partner);
+    public boolean addPartner(AddPartnerDto addPartnerDto) {
+        try{
+            Partner partner = DTOConvertUtil.convert(addPartnerDto, Partner.class);
+            this.partnerDao.saveAndFlush(partner);
+            return true;
+        }catch (RuntimeException e){
+            return false;
+        }
     }
 
     @Override
@@ -83,16 +88,21 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public void editPartner(EditPartnerDto editPartnerDto) {
-        Partner partner = this.partnerDao.getOne(editPartnerDto.getId());
-        partner.setName(editPartnerDto.getName());
-        partner.setVatNumber(editPartnerDto.getVatNumber());
-        partner.setPhoneNumber(editPartnerDto.getPhoneNumber());
-        partner.setAddress(editPartnerDto.getAddress());
-        partner.setCustomer(editPartnerDto.getCustomer());
-        partner.setSupplier(editPartnerDto.getSupplier());
+    public boolean editPartner(EditPartnerDto editPartnerDto) {
+        try{
+            Partner partner = this.partnerDao.getOne(editPartnerDto.getId());
+            partner.setName(editPartnerDto.getName());
+            partner.setVatNumber(editPartnerDto.getVatNumber());
+            partner.setPhoneNumber(editPartnerDto.getPhoneNumber());
+            partner.setAddress(editPartnerDto.getAddress());
+            partner.setCustomer(editPartnerDto.getCustomer());
+            partner.setSupplier(editPartnerDto.getSupplier());
 
-        this.partnerDao.saveAndFlush(partner);
+            this.partnerDao.saveAndFlush(partner);
+            return true;
+        }catch (RuntimeException e){
+            return false;
+        }
     }
 
     @Override
