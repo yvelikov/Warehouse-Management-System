@@ -57,20 +57,6 @@
                                                         <i class="fas fa-edit"><small>Edit</small></i>
                                                     </a>
                                                 </th:block>
-                                                <th:block
-                                                        th:if="${!user.getAuthorities().contains('SUPER_ADMIN')}">
-                                                    <a class="btn btn-sm btn-outline-secondary mb-1"
-                                                       th:href="@{/admin/users/change_password/{id}(id=${user.getId()})}">
-                                                        <small>Change Password</small>
-                                                    </a>
-                                                </th:block>
-                                                <th:block sec:authorize="hasAuthority('SUPER_ADMIN')"
-                                                          th:if="${user.getAuthorities().contains('SUPER_ADMIN')}">
-                                                    <a class="btn btn-sm btn-outline-secondary mb-1"
-                                                       th:href="@{/admin/users/change_password/{id}(id=${user.getId()})}">
-                                                        <small>Change Password</small>
-                                                    </a>
-                                                </th:block>
                                                 <th:block sec:authorize="hasAuthority('SUPER_ADMIN')">
                                                     <th:block th:if="${user.getEnabled()}">
                                                     <a class="btn btn-danger btn-sm mb-1" data-toggle="tooltip" title="Disable account"

@@ -30,8 +30,7 @@ public class UserController extends BaseController {
     @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
     public ModelAndView login(@RequestParam(required = false, name = "error") String error,
-                              @RequestParam(required = false, name = "logout") String logout,
-                              ModelAndView modelAndView) {
+                              @RequestParam(required = false, name = "logout") String logout) {
         if (error != null) {
             return this.view("login","error", Constants.INVALID_CREDENTIALS);
         }
@@ -45,7 +44,7 @@ public class UserController extends BaseController {
 
     @FirstUserOnly
     @GetMapping("/register")
-    public ModelAndView register(ModelAndView modelAndView) {
+    public ModelAndView register() {
         return this.view("register","registerUserDto", new RegisterUserDto());
     }
 

@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@NoRepositoryBean
+@Repository
 public interface BaseDocumentDao<E extends Document> extends JpaRepository<E, String> ,
         PagingAndSortingRepository<E, String>,
         JpaSpecificationExecutor<E> {
@@ -32,4 +32,8 @@ public interface BaseDocumentDao<E extends Document> extends JpaRepository<E, St
             "ON u.id = d.user_id\n" +
             "WHERE d.id = :docId", nativeQuery = true)
     Object findDetailsById(@Param("docId") String id);
+
+    @Query(value = "SELECT d.id, d.document_number, d.date, d.type FROM documents AS d\n" +
+            "WHERE d.partner_id = :partnerId", nativeQuery = true)
+    Page<Object> findDocumentsByPartnerId(@Param("partnerId") String id, Pageable pageable);
 }

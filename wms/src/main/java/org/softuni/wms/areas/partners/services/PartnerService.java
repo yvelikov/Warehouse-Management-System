@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @Transactional
 public interface PartnerService {
-    boolean addPartner(AddPartnerDto addPartnerDto);
+    PartnerServiceDto addPartner(AddPartnerDto addPartnerDto);
 
     Page<PartnerViewDto> findAllByPage(Pageable pageable);
 
@@ -27,7 +27,7 @@ public interface PartnerService {
 
     PartnerServiceDto findById(String id);
 
-    boolean editPartner(EditPartnerDto editPartnerDto);
+    PartnerServiceDto editPartner(EditPartnerDto editPartnerDto);
 
     List<SupplierServiceDto> findAllSuppliers();
 

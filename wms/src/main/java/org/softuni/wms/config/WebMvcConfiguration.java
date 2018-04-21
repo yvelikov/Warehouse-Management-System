@@ -50,20 +50,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(this.userAuthenticationInterceptor);
     }
 
-//    @Override
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController("/notFound").setStatusCode(HttpStatus.NOT_FOUND).setViewName("errors/404.html");
-//        registry.setOrder(100000);
-//    }
-//
-//    @Bean
-//    public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> containerCustomizer() {
-//        return container -> {
-//            container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND,
-//                    "/notFound"));
-//        };
-//    }
-
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver();

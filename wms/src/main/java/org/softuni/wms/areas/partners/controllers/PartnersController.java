@@ -2,6 +2,7 @@ package org.softuni.wms.areas.partners.controllers;
 
 import org.softuni.wms.areas.partners.models.binding.AddPartnerDto;
 import org.softuni.wms.areas.partners.models.binding.EditPartnerDto;
+import org.softuni.wms.areas.partners.models.service.PartnerServiceDto;
 import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.services.PartnerService;
 import org.softuni.wms.controllers.BaseController;
@@ -99,5 +100,11 @@ public class PartnersController extends BaseController {
         }
 
         return this.redirectToLast(request);
+    }
+
+    @GetMapping("/partners/details/{id}")
+    public ModelAndView partnerDetails(@PathVariable String id) {
+        PartnerServiceDto partnerDetails = this.partnerService.findById(id);
+        return this.view("partners/partner-details", "partnerDetails", partnerDetails);
     }
 }

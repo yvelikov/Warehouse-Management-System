@@ -7,6 +7,7 @@ import org.softuni.wms.areas.users.models.binding.RegisterUserDto;
 import org.softuni.wms.areas.users.models.binding.UserDto;
 import org.softuni.wms.areas.users.models.binding.UserEditDto;
 import org.softuni.wms.areas.users.models.service.RoleServiceDto;
+import org.softuni.wms.areas.users.models.service.UserServiceDto;
 import org.softuni.wms.areas.users.models.view.UserViewDto;
 import org.softuni.wms.areas.users.repositories.UserDao;
 import org.softuni.wms.areas.users.services.api.RoleService;
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addUser(UserDto userDto) {
+    public UserServiceDto addUser(UserDto userDto) {
         try {
             User user = DTOConvertUtil.convert(userDto, User.class);
             user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
@@ -70,10 +71,10 @@ public class UserServiceImpl implements UserService {
 
             user.setAuthorities(roles);
 
-            this.userDao.saveAndFlush(user);
-            return true;
+            User savedUser = this.userDao.saveAndFlush(user);
+            return DTOConvertUtil.convert(savedUser, UserServiceDto.class);
         } catch (RuntimeException e) {
-            return false;
+            return null;
         }
     }
 
@@ -116,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean edit(@Valid UserEditDto userEditDto) {
+    public UserServiceDto edit(@Valid UserEditDto userEditDto) {
         try {
             User user = this.userDao.getOne(userEditDto.getId());
             Set<Role> userRoles = new HashSet<>();
@@ -133,10 +134,10 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userEditDto.getEmail());
             user.setAuthorities(userRoles);
 
-            this.userDao.saveAndFlush(user);
-            return true;
+            User savedUser = this.userDao.saveAndFlush(user);
+            return DTOConvertUtil.convert(savedUser, UserServiceDto.class);
         } catch (RuntimeException e) {
-            return false;
+            return null;
         }
     }
 
@@ -146,7 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean registerFirstUser(@Valid RegisterUserDto registerUserDto) {
+    public UserServiceDto registerFirstUser(@Valid RegisterUserDto registerUserDto) {
         try {
             User user = DTOConvertUtil.convert(registerUserDto, User.class);
             user.setPassword(this.passwordEncoder.encode(registerUserDto.getPassword()));
@@ -162,15 +163,15 @@ public class UserServiceImpl implements UserService {
             roles.add(role);
             user.setAuthorities(roles);
 
-            this.userDao.saveAndFlush(user);
-            return true;
+            User savedUser = this.userDao.saveAndFlush(user);
+            return DTOConvertUtil.convert(savedUser, UserServiceDto.class);
         } catch (RuntimeException e) {
-            return false;
+            return null;
         }
     }
 
     @Override
-    public boolean disable(String id) {
+    public UserServiceDto disable(String id) {
         try {
             User user = this.userDao.getOne(id);
             user.getAuthorities().forEach(r -> {
@@ -180,15 +181,15 @@ public class UserServiceImpl implements UserService {
             });
 
             user.setEnabled(false);
-            this.userDao.saveAndFlush(user);
-            return true;
+            User savedUser = this.userDao.saveAndFlush(user);
+            return DTOConvertUtil.convert(savedUser,UserServiceDto.class);
         } catch (RuntimeException e) {
-            return false;
+            return null;
         }
     }
 
     @Override
-    public boolean enable(String id) {
+    public UserServiceDto enable(String id) {
         try {
             User user = this.userDao.getOne(id);
             user.getAuthorities().forEach(r -> {
@@ -198,10 +199,10 @@ public class UserServiceImpl implements UserService {
             });
 
             user.setEnabled(true);
-            this.userDao.saveAndFlush(user);
-            return true;
+            User savedUser = this.userDao.saveAndFlush(user);
+            return DTOConvertUtil.convert(savedUser,UserServiceDto.class);
         } catch (RuntimeException e) {
-            return false;
+            return null;
         }
     }
 

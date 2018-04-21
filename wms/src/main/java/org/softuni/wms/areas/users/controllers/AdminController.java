@@ -4,6 +4,7 @@ import org.softuni.wms.annotations.PreAuthenticateAction;
 import org.softuni.wms.areas.users.models.binding.UserDto;
 import org.softuni.wms.areas.users.models.binding.UserEditDto;
 import org.softuni.wms.areas.users.models.service.RoleServiceDto;
+import org.softuni.wms.areas.users.models.service.UserServiceDto;
 import org.softuni.wms.areas.users.models.view.AllRolesViewDto;
 import org.softuni.wms.areas.users.models.view.UserViewDto;
 import org.softuni.wms.areas.users.services.api.RoleService;
@@ -86,12 +87,12 @@ public class AdminController extends BaseController {
     }
 
     @GetMapping("/users/create")
-    public ModelAndView register(ModelAndView modelAndView) {
-        modelAndView.setViewName("admin/users/create-user");
+    public ModelAndView register() {
         List<RoleServiceDto> roles = this.roleService.findAll();
-        modelAndView.addObject("roles", roles);
-        modelAndView.addObject("userDto", new UserDto());
-        return modelAndView;
+        return this.view("admin/users/create-user", new HashMap<>(){{
+            put("roles", roles);
+            put("userDto", new UserDto());
+        }});
     }
 
     @PostMapping("/users/create")
@@ -110,22 +111,20 @@ public class AdminController extends BaseController {
                 }});
             }
 
-            boolean result = this.userService.addUser(userDto);
-            if (result) this.sendConfirmationEmail(userDto);
+            UserServiceDto result = this.userService.addUser(userDto);
+            if (result != null) this.sendConfirmationEmail(userDto);
         }
 
         if ("cancel".equals(action)) {
             return this.redirectToLast(request);
         }
-        return redirect("/admin/users/all");
+        return this.redirect("/admin/users/all");
     }
 
     @GetMapping("/users/all")
-    public ModelAndView allUsers(ModelAndView modelAndView) {
-        modelAndView.setViewName("admin/users/all-users");
+    public ModelAndView allUsers() {
         List<UserViewDto> allUsers = this.userService.findAllSortedByUsername();
-        modelAndView.addObject("allUsers", allUsers);
-        return modelAndView;
+        return this.view("admin/users/all-users","allUsers", allUsers );
     }
 
     @PreAuthenticateAction(inRole = "ADMIN")
@@ -148,7 +147,7 @@ public class AdminController extends BaseController {
                 return this.getUserView(userEditDto);
             }
 
-            String actionResult = this.userService.edit(userEditDto)
+            String actionResult = (this.userService.edit(userEditDto) != null)
                     ? String.format(Constants.ACTION_RESULT_MESSAGE, userEditDto.getUsername(), "edited")
                     : Constants.ACTION_RESULT_NOT_COMPLETED;
             redirectAttributes.addFlashAttribute("actionResult", actionResult);
@@ -176,7 +175,7 @@ public class AdminController extends BaseController {
                                            HttpServletRequest request,
                                            RedirectAttributes redirectAttributes) {
         if ("disable".equals(action)) {
-            String actionResult = this.userService.disable(userEditDto.getId())
+            String actionResult = (this.userService.disable(userEditDto.getId()) != null)
                     ? String.format(Constants.ACTION_RESULT_MESSAGE, userEditDto.getUsername(), "disabled")
                     : Constants.ACTION_RESULT_NOT_COMPLETED;
             redirectAttributes.addFlashAttribute("actionResult", actionResult);
@@ -204,7 +203,7 @@ public class AdminController extends BaseController {
                                           HttpServletRequest request,
                                           RedirectAttributes redirectAttributes) {
         if ("enable".equals(action)) {
-            String actionResult = this.userService.enable(userEditDto.getId())
+            String actionResult = (this.userService.enable(userEditDto.getId()) != null)
                     ? String.format(Constants.ACTION_RESULT_MESSAGE, userEditDto.getUsername(), "enabled")
                     : Constants.ACTION_RESULT_NOT_COMPLETED;
             redirectAttributes.addFlashAttribute("actionResult", actionResult);

@@ -18,19 +18,19 @@ public class DocumentNumberGenerator{
     }
 
     public Long next() {
-        Sequence sequence = sequenceDao.findByName(getName());
+        Sequence sequence = this.sequenceDao.findByName(getName());
         if (sequence == null) {
             sequence = new Sequence(getName());
         }
 
         Long value = sequence.getValue();
         sequence.setValue(++value);
-        sequenceDao.saveAndFlush(sequence);
+        this.sequenceDao.saveAndFlush(sequence);
 
         return value;
     }
 
-    String getName() {
+    public String getName() {
         return "DOC";
     }
 }

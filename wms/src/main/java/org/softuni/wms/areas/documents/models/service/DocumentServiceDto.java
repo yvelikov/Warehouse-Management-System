@@ -1,7 +1,7 @@
 package org.softuni.wms.areas.documents.models.service;
 
-import org.softuni.wms.areas.partners.entities.Partner;
-import org.softuni.wms.areas.users.entities.User;
+import org.softuni.wms.areas.partners.models.service.PartnerServiceDto;
+import org.softuni.wms.areas.users.models.service.UserServiceDto;
 
 import java.time.LocalDate;
 
@@ -10,8 +10,8 @@ public class DocumentServiceDto {
     private String id;
     private Long documentNumber;
     private LocalDate date;
-    private User user;
-    private Partner partner;
+    private UserServiceDto user;
+    private PartnerServiceDto partner;
 
     public DocumentServiceDto() {
     }
@@ -40,19 +40,19 @@ public class DocumentServiceDto {
         this.date = date;
     }
 
-    public User getUser() {
+    public UserServiceDto getUser() {
         return this.user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserServiceDto user) {
         this.user = user;
     }
 
-    public Partner getPartner() {
+    public PartnerServiceDto getPartner() {
         return this.partner;
     }
 
-    public void setPartner(Partner partner) {
+    public void setPartner(PartnerServiceDto partner) {
         this.partner = partner;
     }
 }

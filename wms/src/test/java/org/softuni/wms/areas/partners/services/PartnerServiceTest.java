@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.softuni.wms.areas.partners.entities.Partner;
 import org.softuni.wms.areas.partners.models.binding.AddPartnerDto;
 import org.softuni.wms.areas.partners.models.binding.EditPartnerDto;
+import org.softuni.wms.areas.partners.models.service.PartnerServiceDto;
+import org.softuni.wms.areas.partners.models.service.SupplierServiceDto;
 import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.repositories.PartnerDao;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,8 @@ public class PartnerServiceTest {
     private Partner testSupplier;
     private AddPartnerDto testCustomerDto;
     private AddPartnerDto testSupplierDto;
+    private EditPartnerDto editPartnerDto;
+    private SupplierServiceDto supplierServiceDto;
 
     @Before
     public void setUp() throws Exception {
@@ -78,19 +82,37 @@ public class PartnerServiceTest {
         this.testSupplier.setCustomer(false);
         this.testSupplier.setSupplier(true);
 
+        this.editPartnerDto = new EditPartnerDto();
+        this.editPartnerDto.setId("1");
+        this.editPartnerDto.setName("TestEditSupplier");
+        this.editPartnerDto.setVatNumber("1234567890");
+        this.editPartnerDto.setAddress("NEW Test Address");
+        this.editPartnerDto.setPhoneNumber("1234567890");
+        this.editPartnerDto.setCustomer(true);
+        this.editPartnerDto.setSupplier(false);
+
+        this.supplierServiceDto = new SupplierServiceDto();
+        this.supplierServiceDto.setId("2");
+        this.supplierServiceDto.setName("TestSupplier");
+        this.supplierServiceDto.setVatNumber("1234567890");
+        this.supplierServiceDto.setAddress("Test Address");
+        this.supplierServiceDto.setPhoneNumber("1234567890");
+
+
         when(this.partnerDao.saveAndFlush(any())).thenAnswer(a -> a.getArgument(0));
 
         List<Partner> partners = List.of(this.testCustomer, this.testSupplier);
 
         when(this.partnerDao.findAll(pageable)).thenReturn(new PageImpl<Partner>(partners));
         when(this.partnerDao.getOne("1")).thenReturn(this.testCustomer);
+        when(this.partnerDao.findPartnersBySupplierIsTrueOrderByName()).thenReturn(List.of(this.testSupplier));
     }
 
     @Test
-    public void addPartner_WithValidPartner_ShouldNotReturnFalse() {
-        boolean isCreated = this.partnerServiceImpl.addPartner(this.testCustomerDto);
+    public void addPartner_WithValidPartner_ShouldNotReturnNull() {
+        PartnerServiceDto partnerServiceDto = this.partnerServiceImpl.addPartner(this.testCustomerDto);
 
-        Assert.assertNotEquals("Partner was not created", false, isCreated);
+        Assert.assertNotEquals("Partner was not created", null, partnerServiceDto);
     }
 
     @Test
@@ -114,5 +136,17 @@ public class PartnerServiceTest {
         Assert.assertEquals(this.testCustomer.getPhoneNumber(),editPartnerDto.getPhoneNumber());
         Assert.assertEquals(this.testCustomer.getCustomer(),editPartnerDto.getCustomer());
         Assert.assertEquals(this.testCustomer.getSupplier(),editPartnerDto.getSupplier());
+    }
+
+    @Test
+    public void editPartner_withValidEditPartnerDto_ShouldNotReturnNull(){
+        this.partnerServiceImpl.editPartner(this.editPartnerDto);
+        Assert.assertNotEquals("Partner not edited correctly", null, editPartnerDto);
+    }
+
+    @Test
+    public void editPartner_withValidEditPartnerDto_IsEdited(){
+        PartnerServiceDto partnerServiceDto = this.partnerServiceImpl.editPartner(this.editPartnerDto);
+        Assert.assertEquals("Partner address not edited correctly", partnerServiceDto.getAddress(), this.editPartnerDto.getAddress());
     }
 }

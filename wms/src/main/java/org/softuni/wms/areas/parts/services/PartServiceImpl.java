@@ -24,6 +24,8 @@ import java.util.List;
 @Transactional
 public class PartServiceImpl implements PartService {
 
+    private static final long DEFAULT_QUANTITY = 0L;
+
     private final PartDao partDao;
     private final PartnerService partnerService;
 
@@ -34,7 +36,7 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public boolean addPart(AddPartDto addPartDto) {
+    public PartServiceDto addPart(AddPartDto addPartDto) {
         try{
             Part part = new Part();
             part.setArticleCode(addPartDto.getArticleCode());
@@ -45,13 +47,13 @@ public class PartServiceImpl implements PartService {
             part.setMarkUp(addPartDto.getMarkUp() / 100);
             SupplierServiceDto supplier = this.partnerService.findSupplierByName(addPartDto.getSupplier());
             Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
-            part.setQuantity(0L);
+            part.setQuantity(DEFAULT_QUANTITY);
             part.setSupplier(partner);
 
-            this.partDao.saveAndFlush(part);
-            return true;
+            Part savedPart = this.partDao.saveAndFlush(part);
+            return DTOConvertUtil.convert(savedPart, PartServiceDto.class);
         } catch (RuntimeException e){
-            return false;
+            return null;
         }
     }
 
@@ -114,7 +116,7 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public boolean editPart(EditPartDto editPartDto) {
+    public PartServiceDto editPart(EditPartDto editPartDto) {
         try{
             Part part = this.partDao.getOne(editPartDto.getId());
             part.setArticleCode(editPartDto.getArticleCode());
@@ -127,10 +129,10 @@ public class PartServiceImpl implements PartService {
             Partner partner = DTOConvertUtil.convert(supplier, Partner.class);
             part.setSupplier(partner);
 
-            this.partDao.saveAndFlush(part);
-            return true;
+            Part savedPart = this.partDao.saveAndFlush(part);
+            return DTOConvertUtil.convert(savedPart, PartServiceDto.class);
         }catch (RuntimeException e){
-            return false;
+            return null;
         }
     }
 

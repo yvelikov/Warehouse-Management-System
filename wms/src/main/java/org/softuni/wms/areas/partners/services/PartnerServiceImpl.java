@@ -10,8 +10,8 @@ import org.softuni.wms.areas.partners.models.view.CustomerViewDto;
 import org.softuni.wms.areas.partners.models.view.PartnerViewDto;
 import org.softuni.wms.areas.partners.models.view.SupplierViewDto;
 import org.softuni.wms.areas.partners.repositories.PartnerDao;
-import org.softuni.wms.utils.DTOConvertUtil;
 import org.softuni.wms.common.SearchCriteria;
+import org.softuni.wms.utils.DTOConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,13 +34,13 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public boolean addPartner(AddPartnerDto addPartnerDto) {
+    public PartnerServiceDto addPartner(AddPartnerDto addPartnerDto) {
         try{
             Partner partner = DTOConvertUtil.convert(addPartnerDto, Partner.class);
-            this.partnerDao.saveAndFlush(partner);
-            return true;
+            Partner savedPartner = this.partnerDao.saveAndFlush(partner);
+            return DTOConvertUtil.convert(savedPartner, PartnerServiceDto.class);
         }catch (RuntimeException e){
-            return false;
+            return null;
         }
     }
 
@@ -88,7 +88,7 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public boolean editPartner(EditPartnerDto editPartnerDto) {
+    public PartnerServiceDto editPartner(EditPartnerDto editPartnerDto) {
         try{
             Partner partner = this.partnerDao.getOne(editPartnerDto.getId());
             partner.setName(editPartnerDto.getName());
@@ -98,10 +98,10 @@ public class PartnerServiceImpl implements PartnerService {
             partner.setCustomer(editPartnerDto.getCustomer());
             partner.setSupplier(editPartnerDto.getSupplier());
 
-            this.partnerDao.saveAndFlush(partner);
-            return true;
+            Partner savedPartner = this.partnerDao.saveAndFlush(partner);
+            return DTOConvertUtil.convert(savedPartner, PartnerServiceDto.class);
         }catch (RuntimeException e){
-            return false;
+            return null;
         }
     }
 

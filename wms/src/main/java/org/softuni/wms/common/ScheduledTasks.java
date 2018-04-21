@@ -41,6 +41,6 @@ public class ScheduledTasks {
             }
         }
 
-        logger.info("Currently logged users: " + currentlyLoggedInUsers.toString());
+        this.logger.info("Currently logged users: " + currentlyLoggedInUsers.toString());
     }
 }
