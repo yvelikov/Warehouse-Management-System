@@ -14,7 +14,7 @@ public class UserServiceDto {
     private Boolean isAccountNonLocked;
     private Boolean isCredentialsNonExpired;
     private Boolean isEnabled;
-    private Set<String> authorities;
+    private Set<RoleServiceDto> authorities;
 
     public UserServiceDto() {
     }
@@ -99,11 +99,11 @@ public class UserServiceDto {
         isEnabled = enabled;
     }
 
-    public Set<String> getAuthorities() {
+    public Set<RoleServiceDto> getAuthorities() {
         return this.authorities;
     }
 
-    public void setAuthorities(Set<String> authorities) {
+    public void setAuthorities(Set<RoleServiceDto> authorities) {
         this.authorities = authorities;
     }
 }

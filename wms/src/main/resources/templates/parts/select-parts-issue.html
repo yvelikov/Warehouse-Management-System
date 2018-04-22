@@ -2,8 +2,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <th:block th:insert="fragments/head"></th:block>
-<!--<script th:src="@{/js/buildyourform.js}"></script>-->
-<!--<script th:src="@{/js/getAllCustomers.js}"></script>-->
 <body class="bg-light">
 <div class="container-fluid">
     <th:block th:insert="fragments/navbar"></th:block>
@@ -85,7 +83,7 @@
             let inputId = $('#quantity'+i).attr("id");
             let cellId = $('#onStock'+i).attr("id");
             let max = $(".select"+i).find('option:selected').attr('class');
-            $('#'+inputId).attr('max', max).attr('title', max + ' pcs available on stock');
+            $('#'+inputId).attr('max', max).attr('title', max + ' units available on stock');
             $('#'+cellId).html(max);
         });
 
@@ -94,7 +92,7 @@
                 let inputId = $('#quantity'+i).attr("id");
                 let cellId = $('#onStock'+i).attr("id");
                 let max = $(".select"+i).find('option:selected').attr('class');
-                $('#'+inputId).attr('max', max).attr('data-original-title', max + ' pcs available on stock');
+                $('#'+inputId).attr('max', max).attr('data-original-title', max + ' units available on stock');
                 $('#'+cellId).html(max);
             });
         });

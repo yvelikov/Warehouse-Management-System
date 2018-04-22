@@ -45,7 +45,7 @@ public class AdminController extends BaseController {
 
     private ModelAndView getUserView(UserEditDto userEditDto) {
         AllRolesViewDto allRoles = this.roleService.getAllRolesView();
-        return this.view("admin/users/edit-user", new HashMap<>() {{
+        return this.view("admin/users/edit-user", new HashMap<String, Object>() {{
             put("allRoles", allRoles);
             put("userEditDto", userEditDto);
         }});
@@ -89,7 +89,7 @@ public class AdminController extends BaseController {
     @GetMapping("/users/create")
     public ModelAndView register() {
         List<RoleServiceDto> roles = this.roleService.findAll();
-        return this.view("admin/users/create-user", new HashMap<>(){{
+        return this.view("admin/users/create-user", new HashMap<String, Object>(){{
             put("roles", roles);
             put("userDto", new UserDto());
         }});
@@ -105,7 +105,7 @@ public class AdminController extends BaseController {
             if (this.isValidUser(userDto, bindingResult)) {
                 List<RoleServiceDto> roles = this.roleService.findAll();
                 ;
-                return this.view("admin/users/create-user", new HashMap<>() {{
+                return this.view("admin/users/create-user", new HashMap<String, Object>() {{
                     put("userDto", userDto);
                     put("roles", roles);
                 }});

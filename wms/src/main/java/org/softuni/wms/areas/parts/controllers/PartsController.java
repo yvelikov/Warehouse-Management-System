@@ -1,6 +1,5 @@
 package org.softuni.wms.areas.parts.controllers;
 
-import com.sun.jdi.request.InvalidRequestStateException;
 import org.softuni.wms.areas.documents.services.api.DocumentService;
 import org.softuni.wms.areas.partners.models.view.CustomerViewDto;
 import org.softuni.wms.areas.partners.models.view.SupplierViewDto;
@@ -11,6 +10,7 @@ import org.softuni.wms.areas.parts.services.PartService;
 import org.softuni.wms.constants.Constants;
 import org.softuni.wms.controllers.BaseController;
 import org.softuni.wms.common.SearchFilter;
+import org.softuni.wms.exceptions.InvalidSupplierException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -212,10 +212,10 @@ public class PartsController extends BaseController {
             }
 
             if (!this.isSupplierValid(partsDeliveryDto)) {
-                throw new InvalidRequestStateException();
+                throw new InvalidSupplierException();
             }
 
-            if(this.partService.deliver(partsDeliveryDto)){
+            if(this.partService.deliver(partsDeliveryDto) != null){
                 redirectAttributes.addFlashAttribute("actionResult", Constants.SUCCESSFUL_DELIVERY);
                 this.documentService.generateDeliveryNote(request.getUserPrincipal(), partsDeliveryDto);
             }
@@ -275,7 +275,7 @@ public class PartsController extends BaseController {
                 }});
             }
 
-            if(this.partService.issue(partsIssueDto)){
+            if(this.partService.issue(partsIssueDto) != null){
                 redirectAttributes.addFlashAttribute("actionResult", Constants.SUCCESSFUL_ISSUE);
                 this.documentService.generateIssueNote(request.getUserPrincipal(), partsIssueDto);
             }

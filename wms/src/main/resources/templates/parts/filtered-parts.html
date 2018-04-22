@@ -76,11 +76,6 @@
                                         <td th:text="${part.getListPrice()}"></td>
                                         <td sec:authorize="hasAnyAuthority('SUPER_ADMIN','ADMIN','EMPLOYEE')">
                                             <div class="text-center">
-                                                <a class="btn btn-outline-info btn-sm mb-1 mt-1"
-                                                   th:href="@{/parts/details/{id}(id=${part.getId()})}">
-                                                    <i class="fas fa-info-circle"></i>
-                                                    <small>Details</small>
-                                                </a>
                                                 <a class="btn btn-outline-secondary btn-sm mb-1 mt-1"
                                                    th:href="@{/parts/edit/{id}(id=${part.getId()})}">
                                                     <i class="fas fa-edit">

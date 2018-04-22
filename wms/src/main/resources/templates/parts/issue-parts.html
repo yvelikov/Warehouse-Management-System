@@ -2,7 +2,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <th:block th:insert="fragments/head"></th:block>
-<!--<script th:src="@{/js/buildyourform.js}"></script>-->
 <script th:src="@{/js/getAllCustomers.js}"></script>
 <body class="bg-light">
 <div class="container-fluid">
@@ -13,9 +12,13 @@
         <div class="card-header bg-dark text-white"><strong>Parts Issue - Select Customer</strong></div>
         <div class="card-body">
             <form th:action="@{/parts/issue/select_parts}" th:method="post" th:object="${issueDataDto}">
-                <!--<div class="container justify-content-end">-->
                 <div class="form-group">
                     <label class="mt-3" for="partnerId">Please select a Customer:</label>
+                    <div class="">
+                        <input class="form-control mb-2" type="text" id="customer-filter" name="customer-filter"
+                               placeholder="Search for a customer by VAT number or Name"/>
+
+                    </div>
                     <select class="form-control" th:field="*{partnerId}" th:value="*{partnerId}" id="partnerId">
                         <th:block th:each="customer : ${allCustomers}">
                             <option th:value="${customer.id}"
@@ -44,26 +47,48 @@
                         Cancel
                     </button>
                 </div>
-                <!--</div>-->
             </form>
         </div>
     </div>
 </div>
 <th:block th:insert="fragments/footer"></th:block>
 <script>
-    // $(document).ready(function () {
-    //     let max = $(this).find('option:selected').attr('class');
-    //     $('#numberOfRows').attr('max', max).attr('placeholder', 'Maximum rows - ' + max);
-    //
-    //     $(document).on('change', 'select', function () {
-    //         max = $(this).find('option:selected').attr('class');
-    //         $('#numberOfRows').attr('max', max).attr('placeholder', 'Maximum rows - ' + max);
-    //     });
-    //
-    //     $(function () {
-    //         $('[data-toggle="tooltip"]').tooltip();
-    //     });
-    // });
+    $(document).ready(function () {
+
+        $(function () {
+            $('#partnerId').filterByText($('#customer-filter'));
+        });
+
+        jQuery.fn.filterByText = function (textbox) {
+            return this.each(function () {
+                let select = this;
+                let options = [];
+                $(select).find('option').each(function () {
+                    options.push({
+                        value: $(this).val(),
+                        text: $(this).text()
+                    });
+                });
+
+                $(select).data('options', options);
+
+                $(textbox).bind('change keyup', function () {
+                    let options = $(select).empty().data('options');
+                    let search = $.trim($(this).val());
+                    let regex = new RegExp(search, "gi");
+
+                    $.each(options, function (i) {
+                        let option = options[i];
+                        if (option.text.match(regex) !== null) {
+                            $(select).append(
+                                $('<option>').text(option.text).val(option.value)
+                            );
+                        }
+                    });
+                });
+            });
+        };
+    });
 </script>
 </body>
 </html>

@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -151,24 +152,27 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public boolean deliver(PartsOperationDto partsOperationDto) {
+    public List<PartServiceDto> deliver(PartsOperationDto partsOperationDto) {
         try{
+            List<PartServiceDto> partServiceDtoList = new ArrayList<>();
             for (OperationPartDto operationPartDto : partsOperationDto.getParts()) {
                 Part part = this.partDao.getOne(operationPartDto.getId());
                 Long quantityOnStock = part.getQuantity();
                 Long deliveredQuantity = operationPartDto.getQuantity();
                 part.setQuantity(quantityOnStock + deliveredQuantity);
-                this.partDao.saveAndFlush(part);
+                Part deliveredPart = this.partDao.saveAndFlush(part);
+                partServiceDtoList.add(DTOConvertUtil.convert(deliveredPart, PartServiceDto.class));
             }
-            return true;
+            return partServiceDtoList;
         } catch (RuntimeException e){
-            return false;
+            return null;
         }
     }
 
     @Override
-    public boolean issue(PartsOperationDto partsIssueDto) {
+    public List<PartServiceDto> issue(PartsOperationDto partsIssueDto) {
         try{
+            List<PartServiceDto> partServiceDtoList = new ArrayList<>();
             for (OperationPartDto operationPartDto : partsIssueDto.getParts()) {
                 Part part = this.partDao.getOne(operationPartDto.getId());
                 Long quantityOnStock = part.getQuantity();
@@ -179,11 +183,12 @@ public class PartServiceImpl implements PartService {
                 }
 
                 part.setQuantity(quantityOnStock - issuedQuantity);
-                this.partDao.saveAndFlush(part);
+                Part issuedPart = this.partDao.saveAndFlush(part);
+                partServiceDtoList.add(DTOConvertUtil.convert(issuedPart, PartServiceDto.class));
             }
-            return true;
+            return partServiceDtoList;
         }catch (RuntimeException e){
-            return false;
+            return null;
         }
     }
 }

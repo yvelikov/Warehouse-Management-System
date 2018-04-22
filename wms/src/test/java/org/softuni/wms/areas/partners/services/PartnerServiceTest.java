@@ -149,4 +149,11 @@ public class PartnerServiceTest {
         PartnerServiceDto partnerServiceDto = this.partnerServiceImpl.editPartner(this.editPartnerDto);
         Assert.assertEquals("Partner address not edited correctly", partnerServiceDto.getAddress(), this.editPartnerDto.getAddress());
     }
+
+    @Test
+    public void getAllSupplierNames_returnsSupplierNames(){
+        List<String> allSuppliersNames = this.partnerServiceImpl.getAllSuppliersNames();
+        Assert.assertEquals("Supplier name are not correct", List.of("TestSupplier"), allSuppliersNames);
+    }
+
 }

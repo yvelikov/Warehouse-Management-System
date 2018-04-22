@@ -9,7 +9,15 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "id", nullable = false, updatable = false)
     private String id;
+
     private String authority;
 
     public Role() {
@@ -19,13 +27,7 @@ public class Role implements GrantedAuthority {
         this.authority = authority;
     }
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "id", nullable = false, updatable = false)
+
     public String getId() {
         return this.id;
     }

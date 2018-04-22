@@ -12,7 +12,7 @@ import java.util.List;
 public interface RoleDao extends JpaRepository<Role, String>{
     Role findFirstByAuthority(String authority);
 
-    @Query(value = "SELECT * FROM roles as r\n" +
-            "WHERE r.authority NOT LIKE :authority", nativeQuery = true)
-    List<Role> findAllRolesFilter(@Param(value = "authority") String authority);
+    @Query("SELECT r FROM Role r\n" +
+            "WHERE r.authority NOT LIKE :auth")
+    List<Role> findAllRolesFilter(@Param("auth") String authority);
 }

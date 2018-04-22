@@ -1,6 +1,6 @@
 package org.softuni.wms.areas.parts.models.service;
 
-import org.softuni.wms.areas.partners.entities.Partner;
+import org.softuni.wms.areas.partners.models.service.PartnerServiceDto;
 import org.softuni.wms.areas.parts.entities.enums.UnitOfMeasure;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ public class PartServiceDto {
     private Double markUp;
     private Long quantity;
     private UnitOfMeasure unitOfMeasure;
-    private Partner supplier;
+    private PartnerServiceDto supplier;
 
     public PartServiceDto() {
     }
@@ -83,11 +83,11 @@ public class PartServiceDto {
         this.unitOfMeasure = unitOfMeasure;
     }
 
-    public Partner getSupplier() {
+    public PartnerServiceDto getSupplier() {
         return this.supplier;
     }
 
-    public void setSupplier(Partner supplier) {
+    public void setSupplier(PartnerServiceDto supplier) {
         this.supplier = supplier;
     }
 }

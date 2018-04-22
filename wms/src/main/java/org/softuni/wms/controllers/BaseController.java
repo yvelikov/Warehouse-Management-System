@@ -4,14 +4,21 @@ import org.softuni.wms.interceptors.LastUrlInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BaseController {
 
-    private static List<String> routesToSkip = List.of("add", "disable", "enable", "create", "edit", "deliver", "issue");
+    private static List<String> routesToSkip = new ArrayList<String>(){{
+        add("add");
+        add("disable");
+        add("enable");
+        add("create");
+        add("edit");
+        add("deliver");
+        add("issue");
+        add("search");
+        add("documents/partner");
+    }};
 
     private boolean containsSkipRoute(String lastUrl) {
         for (String route : routesToSkip) {

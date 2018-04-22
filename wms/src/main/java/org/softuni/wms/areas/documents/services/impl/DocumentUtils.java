@@ -7,7 +7,7 @@ import org.softuni.wms.areas.documents.models.view.DocumentViewDto;
 import java.sql.Date;
 import java.time.LocalDate;
 
-public class DocumentUtils {
+class DocumentUtils {
 
     static DocumentViewDto mapDocumentToDto(Document d) {
         DocumentViewDto documentViewDto = new DocumentViewDto();

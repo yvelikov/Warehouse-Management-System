@@ -35,7 +35,7 @@ public interface PartService {
 
     String getSupplierId(String id);
 
-    boolean deliver(PartsOperationDto partsOperationDto);
+    List<PartServiceDto> deliver(PartsOperationDto partsOperationDto);
 
-    boolean issue(PartsOperationDto partsOperationDto);
+    List<PartServiceDto> issue(PartsOperationDto partsOperationDto);
 }

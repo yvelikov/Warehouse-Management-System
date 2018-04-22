@@ -2,8 +2,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <th:block th:insert="fragments/head"></th:block>
-<!--<script th:src="@{/js/buildyourform.js}"></script>-->
-<!--<script th:src="@{/js/getAllCustomers.js}"></script>-->
 <body class="bg-light">
 <div class="container-fluid">
     <th:block th:insert="fragments/navbar"></th:block>
@@ -13,7 +11,6 @@
         <div class="card-header bg-dark text-white"><strong>Parts Delivery - Select Supplier</strong></div>
         <div class="card-body">
             <form th:action="@{/parts/deliver/select_parts}" th:method="post" th:object="${deliveryDataDto}">
-                <!--<div class="container justify-content-end">-->
                 <div class="form-group">
                     <label class="mt-3" for="partnerId">Please select a Supplier:</label>
                     <select class="form-control" th:field="*{partnerId}" th:value="*{partnerId}" id="partnerId">
@@ -29,7 +26,7 @@
                     </th:block>
                 </div>
                 <div class="">
-                    <label for="numberOfRows">Please select number of rows</label>
+                    <label for="numberOfRows">Please select number of rows:</label>
                     <input type="number" class="form-control" id="numberOfRows" name="numberOfRows" min="1" step="1"
                            th:field="*{numberOfRows}"
                            th:classappend="${#fields.hasErrors('numberOfRows')}?'border border-danger'"
@@ -49,7 +46,6 @@
                         Cancel
                     </button>
                 </div>
-                <!--</div>-->
             </form>
         </div>
     </div>
@@ -62,12 +58,8 @@
 
         $(document).on('change', 'select', function () {
             max = $(this).find('option:selected').attr('class');
-            $('#numberOfRows').attr('max', max).attr('placeholder', 'Maximum rows - ' + max);;
+            $('#numberOfRows').attr('max', max).attr('placeholder', 'Maximum rows - ' + max);
         });
-
-        $( function() {
-            $('[data-toggle="tooltip"]').tooltip();
-        } );
     });
 </script>
 </body>

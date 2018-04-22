@@ -109,6 +109,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Page<DocumentByPartnerViewDto> findDocumentsByPartnerId(String partnerId, Pageable pageable) {
         Page<Object> documentsByPartnerId = this.baseDocumentDao.findDocumentsByPartnerId(partnerId, pageable);
         return documentsByPartnerId.map(d->{
